@@ -1,4 +1,5 @@
 import type { CargoQueryParameters } from "@/models/cargo/cargo-query-parameters";
+import { createFieldsString, createPropColumnMap } from "./cargo-util";
 import { setUrlQueryParams } from "./url-util";
 
 export default class PCGWApi {
@@ -11,15 +12,24 @@ export default class PCGWApi {
 
     public async searchGames() {
 
-        const searchUrl = setUrlQueryParams(this.baseUrl, new URLSearchParams(<Required<Pick<CargoQueryParameters,
-            "origin" | "action" | "tables" | "fields" | "limit" | "format">>>{
+
+        const propColumnMap = createPropColumnMap("Infobox_game", {
+            page: "_pageName",
+            steamId: "Steam_AppID",
+            gogId: "GOGcom_ID",
+            releaseDate: "Released"
+        })
+
+        const params: Required<Pick<CargoQueryParameters, "origin" | "action" | "tables" | "fields" | "limit" | "format">> = {
             origin: "*", 
             action: "cargoquery",
             tables: "Infobox_game",
-            fields: "Infobox_game._pageName=Page,Infobox_game.Developers,Infobox_game.Released,Infobox_game.Cover_URL",
+            fields: createFieldsString(propColumnMap),
             limit: "5",
             format: "json"
-        }));
+        }
+
+        const searchUrl = setUrlQueryParams(this.baseUrl, new URLSearchParams(params));
 
         const response = await fetch(searchUrl, {
             method: "GET",
@@ -28,7 +38,9 @@ export default class PCGWApi {
                 "Content-Type": "application/json"
             }
         });
-        const json = await response.json();
+
+        const json: { [Key in keyof typeof propColumnMap.props]: string } = await response.json();
+
         console.log(json);
         return response;
     }

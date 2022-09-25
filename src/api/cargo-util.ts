@@ -1,17 +1,17 @@
+import type { PropColumnMap } from "@/models/cargo/prop-column-map";
 import type { Tables } from "@/models/tables/tables";
 
-type TableColumnMapping<TableName extends keyof Tables> = {
-    tableName: TableName;
-    columnMappings: {
-        [Key in keyof Tables[TableName]]?: string;
-    }
-}
+type CreatePropColumnMap = <TableName extends keyof Tables, Props extends string>(talbeName: TableName, props: PropColumnMap<TableName, Props>["props"]) => PropColumnMap<TableName, Props>
 
-type CreateFieldsString = <Mapping extends TableColumnMapping<keyof Tables>>(...mappings: Mapping[]) => string;
+export const createPropColumnMap: CreatePropColumnMap = (tableName, props) => ({
+    tableName,
+    props
+});
 
-export const createFieldsString: CreateFieldsString = (...mappings): string =>
-    mappings.map(({ tableName, columnMappings }) => Object.entries(columnMappings)
-        .filter((e): e is [string, string] => e[1] !== undefined)
-        .map(([column, alias]) => `${tableName}.${column}=${alias}`)
+type CreateFieldsString = <TableName extends keyof Tables, Mapping extends PropColumnMap<TableName, string>>(...mappings: Mapping[]) => string;
+
+export const createFieldsString: CreateFieldsString = (...mappings) =>
+    mappings.map(({ tableName, props: columnMappings }) => Object.entries(columnMappings)
+        .map(([alias, column]) => `${tableName}.${String(column)}=${alias}`)
         .join(",")
     ).join(",");
