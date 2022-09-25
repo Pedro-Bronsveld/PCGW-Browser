@@ -1,3 +1,4 @@
+import type { CargoQueryParameters } from "@/models/cargo/cargo-query-parameters";
 import { setUrlQueryParams } from "./url-util";
 
 export default class PCGWApi {
@@ -9,8 +10,10 @@ export default class PCGWApi {
     }
 
     public async searchGames() {
-        const searchUrl = setUrlQueryParams(this.baseUrl, new URLSearchParams({
-            origin: "*",
+
+        const searchUrl = setUrlQueryParams(this.baseUrl, new URLSearchParams(<Required<Pick<CargoQueryParameters,
+            "origin" | "action" | "tables" | "fields" | "limit" | "format">>>{
+            origin: "*", 
             action: "cargoquery",
             tables: "Infobox_game",
             fields: "Infobox_game._pageName=Page,Infobox_game.Developers,Infobox_game.Released,Infobox_game.Cover_URL",
