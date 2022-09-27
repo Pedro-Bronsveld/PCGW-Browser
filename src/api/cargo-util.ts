@@ -1,5 +1,10 @@
+import type { CargoQueryParameters } from "@/models/cargo/cargo-query-parameters";
 import type { PropColumnMap } from "@/models/cargo/prop-column-map";
 import type { Tables } from "@/models/tables/tables";
+
+type CreateCargoQueryParams = <Params extends CargoQueryParameters>(params: Params) => Params;
+
+export const createCargoQueryParams: CreateCargoQueryParams = (params) => params;
 
 type CreatePropColumnMap = <TableName extends keyof Tables, Props extends string>(talbeName: TableName, props: PropColumnMap<TableName, Props>["props"]) => PropColumnMap<TableName, Props>
 

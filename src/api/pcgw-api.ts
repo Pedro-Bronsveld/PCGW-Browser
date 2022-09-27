@@ -1,5 +1,4 @@
-import type { CargoQueryParameters } from "@/models/cargo/cargo-query-parameters";
-import { createFieldsString, createPropColumnMap } from "./cargo-util";
+import { createCargoQueryParams, createFieldsString, createPropColumnMap } from "./cargo-util";
 import { setUrlQueryParams } from "./url-util";
 
 export default class PCGWApi {
@@ -12,7 +11,6 @@ export default class PCGWApi {
 
     public async searchGames() {
 
-
         const propColumnMap = createPropColumnMap("Infobox_game", {
             page: "_pageName",
             steamId: "Steam_AppID",
@@ -20,14 +18,14 @@ export default class PCGWApi {
             releaseDate: "Released"
         })
 
-        const params: Required<Pick<CargoQueryParameters, "origin" | "action" | "tables" | "fields" | "limit" | "format">> = {
+        const params = createCargoQueryParams({
             origin: "*", 
             action: "cargoquery",
             tables: "Infobox_game",
             fields: createFieldsString(propColumnMap),
             limit: "5",
             format: "json"
-        }
+        });
 
         const searchUrl = setUrlQueryParams(this.baseUrl, new URLSearchParams(params));
 
