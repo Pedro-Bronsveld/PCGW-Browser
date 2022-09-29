@@ -1,4 +1,3 @@
-import type { GenericTableStructure } from "./generic-table";
 import type InfoboxGameStructure from "./infobox-game";
 import type { RawTable, Table } from "./table";
 

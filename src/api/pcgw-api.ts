@@ -1,3 +1,4 @@
+import type { CargoQueryResponse } from "@/models/cargo/cargo-query-response";
 import { createCargoQueryParams, createFieldsString, createPropColumnMap } from "./cargo-util";
 import { setUrlQueryParams } from "./url-util";
 
@@ -16,7 +17,7 @@ export default class PCGWApi {
             steamId: "Steam_AppID",
             gogId: "GOGcom_ID",
             releaseDate: "Released"
-        })
+        });
 
         const params = createCargoQueryParams({
             origin: "*", 
@@ -37,10 +38,10 @@ export default class PCGWApi {
             }
         });
 
-        const json: { [Key in keyof typeof propColumnMap.props]: string } = await response.json();
+        const rawResponse: CargoQueryResponse<typeof propColumnMap> = await response.json();
 
-        console.log(json);
-        return response;
+        console.log(rawResponse);
+        return rawResponse;
     }
 
 }
