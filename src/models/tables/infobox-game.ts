@@ -16,7 +16,7 @@ export default interface InfoboxGameStructure extends GenericTableStructure {
     "Publishers": Column<string[]>,
     "Engines": Column<string[]>,
     "Available_on": Column<string[]>,
-    "Released": Column<Date[], ";">,
+    "Released": Column<Date[], ";", true, "__precision">,
     "Released_PC_booter": Column<Date>,
     "Released_DOS": Column<Date>,
     "Released_Windows_3x": Column<Date>,
