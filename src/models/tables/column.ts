@@ -8,3 +8,5 @@ export type Column<
         type: T,
         nullable: Nullable
     }
+
+export type GenericColumn = Column<any, any, boolean>;
