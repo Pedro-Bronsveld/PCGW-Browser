@@ -7,7 +7,7 @@ type KeysMatchingType<T extends Object, MatchType> = {
 }[keyof T]
 
 type AllExtraPropsKeys<Structure extends TableStructures[keyof TableStructures]> = {
-    [Key in keyof Structure]: Structure[Key] extends GenericColumn ? Structure[Key]["extraPropsPost"] extends "" ? never : Key : never;
+    [Key in keyof Structure]: Structure[Key] extends GenericColumn ? Structure[Key]["extraPropPostFix"] extends "" ? never : Key : never;
 }[keyof Structure]
 
 export interface CargoQueryResponse<PropMap extends PropColumnMap<keyof Tables, string>> {
@@ -17,7 +17,15 @@ export interface CargoQueryResponse<PropMap extends PropColumnMap<keyof Tables, 
                 TableStructures[PropMap["tableName"]][PropMap["props"][Key]]["nullable"] extends true ? string | null : string
         } & { 
             [Key in KeysMatchingType<PropMap["props"], AllExtraPropsKeys<TableStructures[PropMap["tableName"]]>> & string 
-                as `${ Key }${ TableStructures[PropMap["tableName"]][PropMap["props"][Key]]["extraPropsPost"] }`]: string
+                as `${ Key }${ TableStructures[PropMap["tableName"]][PropMap["props"][Key]]["extraPropPostFix"] }`]: string
         }
     }[];
+}
+
+export interface CargoQueryError {
+    error: {
+        code: string;
+        info: string;
+        "*": string;
+    }
 }

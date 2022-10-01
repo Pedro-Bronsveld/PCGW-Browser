@@ -1,4 +1,4 @@
-import type { CargoQueryParameters } from "@/models/cargo/cargo-query-parameters";
+import type { CargoQueryParameters, SingleWhereString } from "@/models/cargo/cargo-query-parameters";
 import type { PropColumnMap } from "@/models/cargo/prop-column-map";
 import type { Tables } from "@/models/tables/tables";
 
@@ -23,3 +23,9 @@ export const createFieldsString: CreateFieldsString = (...mappings) =>
         .map(([alias, column]) => `${tableName}.${String(column)}=${alias}`)
         .join(",")
     ).join(",");
+
+type CreateWhereString = <TableName extends keyof Tables, TableColumn extends keyof Tables[TableName] & string>
+    (...queryStrs: (SingleWhereString<TableName, TableColumn> | "AND" | "OR" | "NOT")[]) => string;
+
+export const createWhereString: CreateWhereString = (...queryStrings) => queryStrings.join(" ");
+    

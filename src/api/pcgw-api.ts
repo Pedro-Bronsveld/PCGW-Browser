@@ -1,5 +1,5 @@
-import type { CargoQueryResponse } from "@/models/cargo/cargo-query-response";
-import { createCargoQueryParams, createFieldsString, createPropColumnMap } from "./cargo-util";
+import type { CargoQueryError, CargoQueryResponse } from "@/models/cargo/cargo-query-response";
+import { createCargoQueryParams, createFieldsString, createPropColumnMap, createWhereString } from "./cargo-util";
 import { setUrlQueryParams } from "./url-util";
 
 export default class PCGWApi {
@@ -24,24 +24,26 @@ export default class PCGWApi {
             action: "cargoquery",
             tables: "Infobox_game",
             fields: createFieldsString(propColumnMap),
+            where: createWhereString("Infobox_game._pageName LIKE '%Doom%'"),
             limit: "5",
             format: "json"
         });
 
         const searchUrl = setUrlQueryParams(this.baseUrl, new URLSearchParams(params));
 
-        const response = await fetch(searchUrl, {
+        const response: CargoQueryResponse<typeof propColumnMap> | CargoQueryError = await fetch(searchUrl, {
             method: "GET",
             headers: {
                 "Accept": 'application/json',
                 "Content-Type": "application/json"
             }
-        });
+        }).then(r => r.json());
 
-        const rawResponse: CargoQueryResponse<typeof propColumnMap> = await response.json();
+        if ("error" in response)
+            throw response;
 
-        console.log(rawResponse);
-        return rawResponse;
+        console.log(response);
+        return response;
     }
 
 }

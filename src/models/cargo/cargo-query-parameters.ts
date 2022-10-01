@@ -1,3 +1,5 @@
+import type { Tables } from "../tables/tables";
+
 export interface CargoQueryParameters {
     "origin"?: "*";
     "action": "cargoquery";
@@ -17,3 +19,6 @@ export interface CargoQueryParameters {
     "max_display_chars"?: `${number}`;
     "format": "json" | "jsonfm" | "none" | "php" | "phpfm" | "rawfm" | "xml" | "xmlfm";
 }
+
+export type SingleWhereString<TableName extends keyof Tables, TableColumn extends keyof Tables[TableName] & string> = 
+    `${TableName}.${TableColumn}${" " | "="}${string}`
