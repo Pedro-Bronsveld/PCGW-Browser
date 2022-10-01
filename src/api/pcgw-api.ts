@@ -1,3 +1,4 @@
+import type { getDefaultFilters } from "@/constants/default-filters";
 import type { CargoQueryError, CargoQueryResponse } from "@/models/cargo/cargo-query-response";
 import { createCargoQueryParams, createFieldsString, createPropColumnMap, createWhereString } from "./cargo-util";
 import { setUrlQueryParams } from "./url-util";
@@ -10,8 +11,8 @@ export default class PCGWApi {
         return new URL(this.basePath, this.base);
     }
 
-    public async searchGames() {
-
+    public async searchGames(filters?: Partial<ReturnType<typeof getDefaultFilters>> ) {
+        
         const propColumnMap = createPropColumnMap("Infobox_game", {
             page: "_pageName",
             steamId: "Steam_AppID",
@@ -43,7 +44,7 @@ export default class PCGWApi {
             throw response;
 
         console.log(response);
-        return response;
+        return response.cargoquery.map(({ title }) => title);
     }
 
 }
