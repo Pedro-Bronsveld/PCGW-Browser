@@ -1,3 +1,4 @@
+import type { Filter } from "@/models/browse/filter";
 import type { CargoQueryParameters, SingleWhereString } from "@/models/cargo/cargo-query-parameters";
 import type { PropColumnMap } from "@/models/cargo/prop-column-map";
 import type { Tables } from "@/models/tables/tables";
@@ -29,3 +30,8 @@ type CreateWhereString = <TableName extends keyof Tables, TableColumn extends ke
 
 export const createWhereString: CreateWhereString = (...queryStrings) => queryStrings.join(" ");
     
+export const filterToWhereString = <TableName extends keyof Tables>(filter: Filter<TableName, keyof Tables[TableName]>) =>
+    [...filter.options.values()]
+    .filter(option => option.enabled)
+    .map(option => createWhereString(`${filter.table}.${filter.column} HOLDS '${option.value}'`))
+    .join(filter.and ? " AND " : " OR ");

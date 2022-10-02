@@ -7,16 +7,15 @@ import Filter from '../components/Filter.vue';
 const pcgw = new PCGWApi();
 
 const games = reactive<Map<number, Awaited<ReturnType<typeof pcgw.searchGames>>[number]>>(new Map());
+const filters = reactive(getDefaultFilters());
 
 const searchGames = async () => {
-    const gameResults = await pcgw.searchGames();
+    const gameResults = await pcgw.searchGames(filters);
     games.clear();
     gameResults.forEach((game, num) => {
         games.set(num, game);
     });
 };
-
-const filters = reactive(getDefaultFilters());
 
 </script>
 

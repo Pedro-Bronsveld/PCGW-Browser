@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { sortFilterOptions } from '@/browse/filter-options-util';
-import type { Filter } from '@/models/browse/filter';
+import type { GenericFilter } from '@/models/browse/filter';
 import { computed, ref } from 'vue';
 
 const props = defineProps<{
-    filter: Filter
+    filter: GenericFilter
 }>();
 
 const showAll = ref(false);

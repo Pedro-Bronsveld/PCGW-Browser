@@ -1,4 +1,5 @@
 import type { Filter, FilterOption } from "@/models/browse/filter";
+import type { Tables } from "@/models/tables/tables";
 
 const options = (...values: string[]): Map<number, FilterOption> => new Map(values.map((value, number) => [number, {
     number,
@@ -6,7 +7,7 @@ const options = (...values: string[]): Map<number, FilterOption> => new Map(valu
     enabled: false
 }]));
 
-const filter = <F extends Filter>(filter: F): F => filter;
+const filter = <TableName extends keyof Tables, F extends Filter<TableName, keyof Tables[TableName]>>(filter: F): F => filter;
 
 export const getDefaultFilters = () => {
     const defaultFilters = {
@@ -26,7 +27,9 @@ export const getDefaultFilters = () => {
             andCheckbox: true,
             and: false,
             sortAlphabetical: true,
-            sortCheckbox: false
+            sortCheckbox: false,
+            table: "Infobox_game",
+            column: "Controls"
         }),
         modes: filter({
             title: "Modes",
@@ -38,7 +41,9 @@ export const getDefaultFilters = () => {
             andCheckbox: true,
             and: false,
             sortAlphabetical: false,
-            sortCheckbox: false
+            sortCheckbox: false,
+            table: "Infobox_game",
+            column: "Modes"
         }),
         genres: filter({
             title: "Genres",
@@ -121,7 +126,9 @@ export const getDefaultFilters = () => {
             andCheckbox: true,
             and: false,
             sortAlphabetical: true,
-            sortCheckbox: false
+            sortCheckbox: false,
+            table: "Infobox_game",
+            column: "Genres"
         })
     };
     return defaultFilters;

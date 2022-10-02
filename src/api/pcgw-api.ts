@@ -1,6 +1,8 @@
+import { anyOptionsEnabled } from "@/browse/filter-options-util";
 import type { getDefaultFilters } from "@/constants/default-filters";
 import type { CargoQueryError, CargoQueryResponse } from "@/models/cargo/cargo-query-response";
-import { createCargoQueryParams, createFieldsString, createPropColumnMap, createWhereString } from "./cargo-util";
+import { getKeys } from "@/utilities/objet-utils";
+import { createCargoQueryParams, createFieldsString, createPropColumnMap, createWhereString, filterToWhereString } from "./cargo-util";
 import { setUrlQueryParams } from "./url-util";
 
 export default class PCGWApi {
@@ -11,26 +13,35 @@ export default class PCGWApi {
         return new URL(this.basePath, this.base);
     }
 
-    public async searchGames(filters?: Partial<ReturnType<typeof getDefaultFilters>> ) {
+    public async searchGames(filters: ReturnType<typeof getDefaultFilters>) {
         
         const propColumnMap = createPropColumnMap("Infobox_game", {
             page: "_pageName",
+            genres: "Genres",
             steamId: "Steam_AppID",
             gogId: "GOGcom_ID",
             releaseDate: "Released"
         });
-
+        
         const params = createCargoQueryParams({
             origin: "*", 
             action: "cargoquery",
             tables: "Infobox_game",
             fields: createFieldsString(propColumnMap),
-            where: createWhereString("Infobox_game._pageName LIKE '%Doom%'"),
+            where: getKeys(filters)
+                .map(key => filters[key])
+                .filter(anyOptionsEnabled)
+                .map(filter => `(${filterToWhereString(filter)})`).join(" AND "),
             limit: "5",
             format: "json"
         });
 
+        console.log("params:", params)
+
         const searchUrl = setUrlQueryParams(this.baseUrl, new URLSearchParams(params));
+
+        // Start measuring query time
+        const startTime = performance.now();
 
         const response: CargoQueryResponse<typeof propColumnMap> | CargoQueryError = await fetch(searchUrl, {
             method: "GET",
@@ -40,11 +51,16 @@ export default class PCGWApi {
             }
         }).then(r => r.json());
 
+        // End measuring query time
+        const endTime = performance.now();
+        console.log(`Games query took ${Math.round((endTime - startTime) * 100) / 100} milliseconds`);
+
         if ("error" in response)
             throw response;
 
-        console.log(response);
-        return response.cargoquery.map(({ title }) => title);
+        const games = response.cargoquery.map(({ title }) => title);
+        console.log(games);
+        return games;
     }
 
 }

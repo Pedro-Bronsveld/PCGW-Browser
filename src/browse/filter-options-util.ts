@@ -1,4 +1,4 @@
-import type { FilterOption } from "@/models/browse/filter";
+import type { FilterOption, GenericFilter } from "@/models/browse/filter";
 
 export type FilterOptionsSortMode = "default" | "alphabetical";
 
@@ -13,3 +13,5 @@ export const sortFilterOptions = (options: FilterOption[], mode: FilterOptionsSo
         return 0;
     });
 }
+
+export const anyOptionsEnabled = (filter: GenericFilter): boolean => [...filter.options.values()].some(option => option.enabled);
