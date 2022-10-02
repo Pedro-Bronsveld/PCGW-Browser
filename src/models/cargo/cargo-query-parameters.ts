@@ -1,7 +1,7 @@
 import type { Tables } from "../tables/tables";
 
 export interface CargoQueryParameters {
-    "origin"?: "*";
+    "origin": "*";
     "action": "cargoquery";
     "tables": string;
     "join_on"?: string;
@@ -12,7 +12,6 @@ export interface CargoQueryParameters {
     "order_by"?: string;
     "limit"?: `${number}`;
     "offset"?: `${number}`;
-    "outro"?: string;
     "default"?: string;
     "more_results_text"?: string;
     "no_html"?: "";

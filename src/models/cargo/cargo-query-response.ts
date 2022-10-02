@@ -20,6 +20,11 @@ export interface CargoQueryResponse<PropMap extends PropColumnMap<keyof Tables, 
                 as `${ Key }${ TableStructures[PropMap["tableName"]][PropMap["props"][Key]]["extraPropPostFix"] }`]: string
         }
     }[];
+    warnings?: {
+        main: {
+            "*": string;
+        }
+    }
 }
 
 export interface CargoQueryError {
@@ -27,5 +32,6 @@ export interface CargoQueryError {
         code: string;
         info: string;
         "*": string;
+        errorClass?: string;
     }
 }

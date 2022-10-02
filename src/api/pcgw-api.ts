@@ -55,11 +55,14 @@ export default class PCGWApi {
         const endTime = performance.now();
         console.log(`Games query took ${Math.round((endTime - startTime) * 100) / 100} milliseconds`);
 
+        console.log("response:", response);
         if ("error" in response)
             throw response;
+        else if (response.warnings !== undefined)
+            console.warn("Warning in api response:", response.warnings);
 
         const games = response.cargoquery.map(({ title }) => title);
-        console.log(games);
+        console.log("games:", games);
         return games;
     }
 
