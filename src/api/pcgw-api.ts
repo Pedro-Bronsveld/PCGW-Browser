@@ -13,7 +13,7 @@ export default class PCGWApi {
         return new URL(this.basePath, this.base);
     }
 
-    public async searchGames(filters: ReturnType<typeof getDefaultFilters>) {
+    public async searchGames(title: string, filters: ReturnType<typeof getDefaultFilters>) {
         
         const propColumnMap = createPropColumnMap("Infobox_game", {
             page: "_pageName",
@@ -31,7 +31,9 @@ export default class PCGWApi {
             where: getKeys(filters)
                 .map(key => filters[key])
                 .filter(anyOptionsEnabled)
-                .map(filter => `(${filterToWhereString(filter)})`).join(" AND "),
+                .map(filter => `(${filterToWhereString(filter)})`)
+                .concat(title !== "" ? [createWhereString(`Infobox_game._pageName LIKE '%${title}%'`)] : [])
+                .join(" AND "),
             limit: "5",
             format: "json"
         });
