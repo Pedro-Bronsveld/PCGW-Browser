@@ -52,6 +52,7 @@ export default class PCGWApi {
 
         const response: CargoQueryResponse<typeof propColumnMap> | CargoQueryError = await fetch(searchUrl, {
             method: "GET",
+            cache: "force-cache",
             headers: {
                 "Accept": 'application/json',
                 "Content-Type": "application/json"
