@@ -13,7 +13,6 @@ export interface CargoQueryParameters {
     "limit"?: `${number}`;
     "offset"?: `${number}`;
     "default"?: string;
-    "more_results_text"?: string;
     "no_html"?: "";
     "max_display_chars"?: `${number}`;
     "format": "json" | "jsonfm" | "none" | "php" | "phpfm" | "rawfm" | "xml" | "xmlfm";
