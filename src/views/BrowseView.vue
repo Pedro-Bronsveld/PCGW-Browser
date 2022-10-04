@@ -13,6 +13,7 @@ const games = reactive<Map<number, Awaited<ReturnType<typeof pcgw.searchGames>>[
 const filters = reactive(getDefaultFilters());
 const title = ref("");
 const limit = 20;
+const moreAvailable = computed<boolean>(() => games.size >= roundGameCount(games.size, limit));
 
 const router = useRouter();
 
@@ -20,15 +21,18 @@ const updateGames = async (append: boolean = false, count: number = limit) => {
     const searchGamesOptions: SearchGamesOptions = {
         inTitle: title.value,
         filters,
-        limit
+        limit: count
     };
     const gameResults = await pcgw.searchGames(searchGamesOptions);
-    games.clear();
+    if(!append)
+        games.clear();
+    const { size } = games;
     gameResults.forEach((game, num) => {
-        games.set(num, game);
+        games.set(num + size, game);
     });
 
-    const newParams = searchGamesOptionsToQueryParams(searchGamesOptions);
+    // Update query params with new search options values
+    const newParams = searchGamesOptionsToQueryParams(searchGamesOptions, games.size > limit ? games.size : undefined);
     router.push({ name: "browse", query: newParams });
 };
 
@@ -47,13 +51,17 @@ const onQueryParamsChanged = (locationQuery: LocationQuery, coldRun: boolean = f
     };
     const searchGamesOptionsChanged = queryParamsToSearchGamesOptions(locationQuery, searchGamesOptions);
     console.log("searchGamesOptionsChanged", searchGamesOptionsChanged);
-    const count = Number(locationQuery.count) || limit;
+    const count = Number(locationQuery.limit) || limit;
     if (searchGamesOptionsChanged || count !== roundGameCount(games.size, limit) || coldRun) {
         title.value = searchGamesOptions.inTitle;
         updateGames(false, count);
     }
 }
 watch(queryParams, (locationQuery) => onQueryParamsChanged(locationQuery));
+
+const loadMore = () => {
+    updateGames(true);
+}
 
 onMounted(() => {
     onQueryParamsChanged(queryParams.value, true);
@@ -80,6 +88,7 @@ onMounted(() => {
                     {{ game.page }}
                 </li>
             </ul>
+            <input type="button" value="Load More" @click="loadMore" :disabled="!moreAvailable"/>
         </div>
     </main>
 </template>
