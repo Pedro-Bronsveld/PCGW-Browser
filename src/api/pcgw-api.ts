@@ -1,5 +1,6 @@
 import { anyOptionsEnabled } from "@/browse/filter-options-util";
-import type { getDefaultFilters } from "@/constants/default-filters";
+import type { BrowseFilters } from "@/constants/default-filters";
+import type { SearchGamesOptions } from "@/models/browse/search-games-options";
 import type { CargoQueryError, CargoQueryResponse } from "@/models/cargo/cargo-query-response";
 import { getKeys } from "@/utilities/objet-utils";
 import { createCargoQueryParams, createFieldsString, createPropColumnMap, createWhereString, filterToWhereString } from "./cargo-util";
@@ -13,7 +14,9 @@ export default class PCGWApi {
         return new URL(this.basePath, this.base);
     }
 
-    public async searchGames(title: string, filters: ReturnType<typeof getDefaultFilters>) {
+    public async searchGames(options: SearchGamesOptions) {
+
+        const { inTitle, filters } = options;
         
         const propColumnMap = createPropColumnMap("Infobox_game", {
             page: "_pageName",
@@ -32,9 +35,9 @@ export default class PCGWApi {
                 .map(key => filters[key])
                 .filter(anyOptionsEnabled)
                 .map(filter => `(${filterToWhereString(filter)})`)
-                .concat(title !== "" ? [createWhereString(`Infobox_game._pageName LIKE '%${title}%'`)] : [])
+                .concat(inTitle !== "" ? [createWhereString(`Infobox_game._pageName LIKE '%${inTitle}%'`)] : [])
                 .join(" AND "),
-            limit: "5",
+            limit: `${options.limit}`,
             format: "json"
         });
 

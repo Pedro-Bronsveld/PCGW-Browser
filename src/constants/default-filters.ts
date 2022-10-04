@@ -7,7 +7,8 @@ const options = (...values: string[]): Map<number, FilterOption> => new Map(valu
     enabled: false
 }]));
 
-const filter = <TableName extends keyof Tables, F extends Filter<TableName, keyof Tables[TableName]>>(filter: F): F => filter;
+const filter = <TableName extends keyof Tables, F extends Filter<TableName, keyof Tables[TableName]>>(filter: F): 
+    Omit<F, "and"> & { and: boolean } => filter;
 
 export const getDefaultFilters = () => {
     const defaultFilters = {
@@ -417,3 +418,5 @@ export const getDefaultFilters = () => {
     };
     return defaultFilters;
 };
+
+export type BrowseFilters = ReturnType<typeof getDefaultFilters>;
