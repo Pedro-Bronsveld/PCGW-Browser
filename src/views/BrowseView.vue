@@ -13,7 +13,7 @@ const games = reactive<Map<number, Awaited<ReturnType<typeof pcgw.searchGames>>[
 const filters = reactive(getDefaultFilters());
 const title = ref("");
 const limit = 20;
-const moreAvailable = computed<boolean>(() => games.size >= roundGameCount(games.size, limit));
+const moreAvailable = computed<boolean>(() => games.size > 0 && games.size >= roundGameCount(games.size, limit));
 
 const router = useRouter();
 
@@ -21,7 +21,8 @@ const updateGames = async (append: boolean = false, count: number = limit) => {
     const searchGamesOptions: SearchGamesOptions = {
         inTitle: title.value,
         filters,
-        limit: count
+        limit: count,
+        offset: append ? games.size : 0
     };
     const gameResults = await pcgw.searchGames(searchGamesOptions);
     if(!append)

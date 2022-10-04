@@ -4,4 +4,5 @@ export interface SearchGamesOptions {
     inTitle: string;
     filters: BrowseFilters;
     limit: number;
+    offset?: number;
 }

@@ -1,5 +1,4 @@
 import { anyOptionsEnabled } from "@/browse/filter-options-util";
-import type { BrowseFilters } from "@/constants/default-filters";
 import type { SearchGamesOptions } from "@/models/browse/search-games-options";
 import type { CargoQueryError, CargoQueryResponse } from "@/models/cargo/cargo-query-response";
 import { getKeys } from "@/utilities/objet-utils";
@@ -38,6 +37,9 @@ export default class PCGWApi {
                 .concat(inTitle !== "" ? [createWhereString(`Infobox_game._pageName LIKE '%${inTitle}%'`)] : [])
                 .join(" AND "),
             limit: `${options.limit}`,
+            ...(options.offset !== undefined && options.offset !== 0 ? {
+                offset: `${options.offset}`
+            } : {}),
             format: "json"
         });
 
