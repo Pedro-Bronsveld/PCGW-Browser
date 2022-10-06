@@ -34,7 +34,7 @@ export default class PCGWApi {
                 .map(key => filters[key])
                 .filter(anyOptionsEnabled)
                 .map(filter => `(${filterToWhereString(filter)})`)
-                .concat(inTitle !== "" ? [createWhereString(`Infobox_game._pageName LIKE '%${inTitle}%'`)] : [])
+                .concat(inTitle !== "" ? [createWhereString("Infobox_game", `_pageName LIKE '%${inTitle}%'`)] : [])
                 .join(" AND "),
             limit: `${options.limit}`,
             ...(options.offset !== undefined && options.offset !== 0 ? {
@@ -49,7 +49,7 @@ export default class PCGWApi {
 
         // Start measuring query time
         const startTime = performance.now();
-
+        type Test = typeof propColumnMap;
         const response: CargoQueryResponse<typeof propColumnMap> | CargoQueryError = await fetch(searchUrl, {
             method: "GET",
             cache: "force-cache",
@@ -68,6 +68,9 @@ export default class PCGWApi {
             throw response;
         else if (response.warnings !== undefined)
             console.warn("Warning in api response:", response.warnings);
+
+        response.cargoquery[0].title.page;
+        response.cargoquery[0].title.genres;
 
         const games = response.cargoquery.map(({ title }) => title);
         console.log("games:", games);

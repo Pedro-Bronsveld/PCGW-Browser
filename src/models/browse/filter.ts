@@ -1,6 +1,7 @@
-import type { Tables } from "../tables/tables";
+import type { AnyTable, Tables } from "../tables/tables";
 
-export type Filter<TableName extends keyof Tables, ColumnName extends keyof Tables[TableName]> = {
+// export type Filter<TableName extends keyof Tables, T extends Extract<AnyTable, { __tableName: TableName }> = Extract<AnyTable, { __tableName: TableName }>> = {
+export type Filter<TableName extends keyof Tables> = {
     title: string;
     options: Map<number, FilterOption>;
     valueFilter: boolean;
@@ -9,10 +10,12 @@ export type Filter<TableName extends keyof Tables, ColumnName extends keyof Tabl
     sortAlphabetical: boolean;
     sortCheckbox: boolean;
     table: TableName & string,
-    column: ColumnName & string
+    column: keyof Tables[TableName] & string
+    // table: T["__tableName"] & string,
+    // column: keyof Omit<T, "__tableName"> & string
 };
 
-export type GenericFilter = Filter<keyof Tables, keyof Tables[keyof Tables]>
+export type GenericFilter = Filter<keyof Tables>
 
 export type FilterOption = {
     number: number,

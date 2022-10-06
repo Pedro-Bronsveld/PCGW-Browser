@@ -7,11 +7,22 @@ const options = (...values: string[]): Map<number, FilterOption> => new Map(valu
     enabled: false
 }]));
 
-const filter = <TableName extends keyof Tables, F extends Filter<TableName, keyof Tables[TableName]>>(filter: F): 
-    Omit<F, "and"> & { and: boolean } => filter;
+const filter = <TableName extends keyof Tables>(filter: Filter<TableName>): 
+    Filter<TableName> => filter;
 
 export const getDefaultFilters = () => {
     const defaultFilters = {
+        // languages: filter({
+        //     title: "Languages",
+        //     options: options(),
+        //     valueFilter: true,
+        //     andCheckbox: true,
+        //     and: false,
+        //     sortAlphabetical: false,
+        //     sortCheckbox: true,
+        //     table: "L10n",
+        //     column: "Language"
+        // }),
         controls: filter({
             title: "Controls",
             options: options(

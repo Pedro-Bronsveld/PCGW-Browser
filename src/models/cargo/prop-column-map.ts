@@ -1,6 +1,6 @@
 import type { Tables } from "../tables/tables";
 
-export type PropColumnMap<TableName extends keyof Tables, Props extends string, PropsColumns extends Record<Props, keyof Tables[TableName]> = Record<Props, keyof Tables[TableName]>> = {
+export type PropColumnMap<TableName extends keyof Tables & string, Props extends string> = {
     tableName: TableName;
-    props: PropsColumns
+    props: Record<Props, keyof Tables[TableName]>
 }

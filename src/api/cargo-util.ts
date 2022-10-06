@@ -1,5 +1,5 @@
 import type { Filter } from "@/models/browse/filter";
-import type { CargoQueryParameters, SingleWhereString } from "@/models/cargo/cargo-query-parameters";
+import type { CargoQueryParameters } from "@/models/cargo/cargo-query-parameters";
 import type { PropColumnMap } from "@/models/cargo/prop-column-map";
 import type { Tables } from "@/models/tables/tables";
 
@@ -17,7 +17,7 @@ export const createPropColumnMap: CreatePropColumnMap = (tableName, props) => ({
     props
 });
 
-type CreateFieldsString = <TableName extends keyof Tables, Mapping extends PropColumnMap<TableName, string>>(...mappings: Mapping[]) => string;
+type CreateFieldsString = <TableName extends keyof Tables>(...mappings: PropColumnMap<TableName, string>[]) => string;
 
 export const createFieldsString: CreateFieldsString = (...mappings) =>
     mappings.map(({ tableName, props: columnMappings }) => Object.entries(columnMappings)
@@ -25,13 +25,17 @@ export const createFieldsString: CreateFieldsString = (...mappings) =>
         .join(",")
     ).join(",");
 
-type CreateWhereString = <TableName extends keyof Tables, TableColumn extends keyof Tables[TableName] & string>
-    (...queryStrs: (SingleWhereString<TableName, TableColumn> | "AND" | "OR" | "NOT")[]) => string;
 
-export const createWhereString: CreateWhereString = (...queryStrings) => queryStrings.join(" ");
+type SingleWhereString<TableName extends keyof Tables, TableColumn extends keyof Tables[TableName] & string> = 
+    `${TableColumn}${" " | "="}${string}`
+
+type CreateWhereString = <TableName extends (keyof Tables) & string>
+    (tableName: TableName, ...queryStr: (SingleWhereString<TableName, keyof Tables[TableName] & string> | "AND" | "OR" | "NOT")[]) => string;
+
+export const createWhereString: CreateWhereString = (tableName, queryString) => `${tableName}.${queryString}`;
     
-export const filterToWhereString = <TableName extends keyof Tables>(filter: Filter<TableName, keyof Tables[TableName]>) =>
+export const filterToWhereString = <TableName extends (keyof Tables) & string>(filter: Filter<TableName>) =>
     [...filter.options.values()]
     .filter(option => option.enabled)
-    .map(option => createWhereString(`${filter.table}.${filter.column} HOLDS '${option.value}'`))
+    .map(option => createWhereString(filter.table, `${filter.column} HOLDS '${option.value}'`))
     .join(filter.and ? " AND " : " OR ");
