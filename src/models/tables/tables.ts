@@ -16,5 +16,5 @@ export type Tables = {
 }
 
 export type AnyTable = {
-    [Key in keyof Tables]: Tables[Key] & { __tableName: Key }
+    [Key in keyof Tables]: Tables[Key]
 }[keyof Tables];

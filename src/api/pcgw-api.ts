@@ -1,6 +1,9 @@
 import { anyOptionsEnabled } from "@/browse/filter-options-util";
+import type { BrowseFilters } from "@/constants/default-filters";
+import type { Filter } from "@/models/browse/filter";
 import type { SearchGamesOptions } from "@/models/browse/search-games-options";
 import type { CargoQueryError, CargoQueryResponse } from "@/models/cargo/cargo-query-response";
+import type { Tables } from "@/models/tables/tables";
 import { getKeys } from "@/utilities/objet-utils";
 import { createCargoQueryParams, createFieldsString, createPropColumnMap, createWhereString, filterToWhereString } from "./cargo-util";
 import { setUrlQueryParams } from "./url-util";
@@ -33,7 +36,7 @@ export default class PCGWApi {
             where: getKeys(filters)
                 .map(key => filters[key])
                 .filter(anyOptionsEnabled)
-                .map(filter => `(${filterToWhereString(filter)})`)
+                .map(filter => `(${filterToWhereString(filter as unknown as Filter<(typeof filters)[keyof typeof filters]["table"]>)})`)
                 .concat(inTitle !== "" ? [createWhereString("Infobox_game", `_pageName LIKE '%${inTitle}%'`)] : [])
                 .join(" AND "),
             limit: `${options.limit}`,
@@ -49,7 +52,7 @@ export default class PCGWApi {
 
         // Start measuring query time
         const startTime = performance.now();
-        type Test = typeof propColumnMap;
+
         const response: CargoQueryResponse<typeof propColumnMap> | CargoQueryError = await fetch(searchUrl, {
             method: "GET",
             cache: "force-cache",
