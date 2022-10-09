@@ -5,7 +5,7 @@ import type { SearchGamesOptions } from "@/models/browse/search-games-options";
 import type { CargoQueryError, CargoQueryResponse } from "@/models/cargo/cargo-query-response";
 import type { Tables } from "@/models/tables/tables";
 import { getKeys } from "@/utilities/objet-utils";
-import { createCargoQueryParams, createFieldsString, createPropColumnMap, createWhereString, filterToWhereString } from "./cargo-util";
+import { createCargoQueryParams, createFieldsString, createPropColumnMap, createWhereString, filterToWhereString, languageSupportWhereString } from "./cargo-util";
 import { setUrlQueryParams } from "./url-util";
 
 export default class PCGWApi {
@@ -33,7 +33,7 @@ export default class PCGWApi {
             language: "Language"
         });
 
-        console.log("filters:", filters);
+        const anyLanguageOptionsEnabled = anyOptionsEnabled(filters.languages);
         
         const params = createCargoQueryParams({
             origin: "*", 
@@ -44,11 +44,11 @@ export default class PCGWApi {
                     .filter(anyOptionsEnabled)
                     .map(filter => filter.table))
                 )].join(","),
-            ...(anyOptionsEnabled(filters.languages) ? {
+            ...(anyLanguageOptionsEnabled ? {
                 join_on: "Infobox_game._pageID=L10n._pageID",
             } : {}),
             fields: [createFieldsString(gamePropColumnMap)]
-                .concat(anyOptionsEnabled(filters.languages) ? [createFieldsString(l10nPropColumnMap)] : [])
+                .concat(anyLanguageOptionsEnabled ? [createFieldsString(l10nPropColumnMap)] : [])
                 .join(","),
             where: getKeys(filters)
                 .map(key => filters[key])
@@ -56,6 +56,8 @@ export default class PCGWApi {
                 .filter(anyOptionsEnabled)
                 .map(filter => `(${filterToWhereString(filter as unknown as Filter<(typeof filters)[keyof typeof filters]["table"]>)})`)
                 .concat(inTitle !== "" ? [createWhereString("Infobox_game", `_pageName LIKE '%${inTitle}%'`)] : [])
+                .concat(anyLanguageOptionsEnabled && anyOptionsEnabled(filters.languageSupport) ? 
+                    `(${languageSupportWhereString(filters.languageSupport)})` : [])
                 .join(" AND "),
             limit: `${options.limit}`,
             ...(options.offset !== undefined && options.offset !== 0 ? {

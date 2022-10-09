@@ -97,7 +97,7 @@ onMounted(() => {
             <Filter v-for="filter in filters" :filter="filter" />
         </div>
         <div class="gamesList">
-            <h2>Games</h2>
+            <h2>Games ({{ uniqueGames.size }})</h2>
             <ul>
                 <li v-for="[num, game] in uniqueGames">
                     {{ game.page }}

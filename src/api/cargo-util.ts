@@ -33,8 +33,15 @@ type CreateWhereString = <TableName extends (keyof Tables) & string>
 
 export const createWhereString: CreateWhereString = (tableName, queryString) => `${tableName}.${queryString}`;
     
-export const filterToWhereString = <TableName extends (keyof Tables) & string>(filter: Filter<TableName>, combineOperator?: " AND " | " OR ") =>
+export const filterToWhereString = <TableName extends (keyof Tables) & string>(filter: Filter<TableName>, combineOperator?: " AND " | " OR "): string =>
     [...filter.options.values()]
     .filter(option => option.enabled)
     .map(option => createWhereString(filter.table, `${filter.column}${filter.isList === true ? " HOLDS " : "="}'${option.value}'`))
     .join(combineOperator === undefined ? filter.and ? " AND " : " OR " : combineOperator);
+
+// Language support where string creation
+export const languageSupportWhereString = (filter: Filter<"L10n">): string =>
+    [...filter.options.values()]
+    .filter(option => option.enabled)
+    .map(option => `${filter.table}.${option.value} IN ('true','hackable','limited')`)
+    .join(filter.and ? " AND " : " OR ");
