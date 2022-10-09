@@ -104,12 +104,28 @@ export const getDefaultFilters = () => {
                 "Cantonese",
             ),
             valueFilter: true,
-            andCheckbox: true,
+            andCheckbox: false,
             and: false,
             sortAlphabetical: false,
             sortCheckbox: true,
             table: "L10n",
-            column: "Language"
+            column: "Language",
+            radio: true
+        }),
+        languageSupport: filter({
+            title: "Language Support",
+            options: options(
+                "Interface",
+                "Audio",
+                "Subtitles"
+            ),
+            valueFilter: false,
+            andCheckbox: true,
+            and: false,
+            sortAlphabetical: false,
+            sortCheckbox: false,
+            table: "L10n",
+            column: "Interface"
         }),
         controls: filter({
             title: "Controls",
@@ -129,7 +145,8 @@ export const getDefaultFilters = () => {
             sortAlphabetical: true,
             sortCheckbox: false,
             table: "Infobox_game",
-            column: "Controls"
+            column: "Controls",
+            isList: true
         }),
         modes: filter({
             title: "Modes",
@@ -143,7 +160,8 @@ export const getDefaultFilters = () => {
             sortAlphabetical: false,
             sortCheckbox: false,
             table: "Infobox_game",
-            column: "Modes"
+            column: "Modes",
+            isList: true
         }),
         genres: filter({
             title: "Genres",
@@ -228,7 +246,8 @@ export const getDefaultFilters = () => {
             sortAlphabetical: true,
             sortCheckbox: false,
             table: "Infobox_game",
-            column: "Genres"
+            column: "Genres",
+            isList: true
         }),
         artStyles: filter({
             title: "Art Styles",
@@ -255,7 +274,8 @@ export const getDefaultFilters = () => {
             sortAlphabetical: true,
             sortCheckbox: false,
             table: "Infobox_game",
-            column: "Art_styles"
+            column: "Art_styles",
+            isList: true
         }),
         availableOn: filter({
             title: "Available On",
@@ -274,7 +294,8 @@ export const getDefaultFilters = () => {
             sortAlphabetical: false,
             sortCheckbox: true,
             table: "Infobox_game",
-            column: "Available_on"
+            column: "Available_on",
+            isList: true
         }),
         monetization: filter({
             title: "Monetization",
@@ -294,7 +315,8 @@ export const getDefaultFilters = () => {
             sortAlphabetical: true,
             sortCheckbox: false,
             table: "Infobox_game",
-            column: "Monetization"
+            column: "Monetization",
+            isList: true
         }),
         microtransactions: filter({
             title: "Microtransactions",
@@ -319,7 +341,8 @@ export const getDefaultFilters = () => {
             sortAlphabetical: true,
             sortCheckbox: false,
             table: "Infobox_game",
-            column: "Microtransactions"
+            column: "Microtransactions",
+            isList: true
         }),
         pacing: filter({
             title: "Pacing",
@@ -336,7 +359,8 @@ export const getDefaultFilters = () => {
             sortCheckbox: false,
             sortAlphabetical: true,
             table: "Infobox_game",
-            column: "Pacing"
+            column: "Pacing",
+            isList: true
         }),
         perspectives: filter({
             title: "Perspectives",
@@ -360,7 +384,8 @@ export const getDefaultFilters = () => {
             sortCheckbox: false,
             sortAlphabetical: true,
             table: "Infobox_game",
-            column: "Perspectives"
+            column: "Perspectives",
+            isList: true
         }),
         themes: filter({
             title: "Themes",
@@ -417,7 +442,8 @@ export const getDefaultFilters = () => {
             sortCheckbox: false,
             sortAlphabetical: true,
             table: "Infobox_game",
-            column: "Themes"
+            column: "Themes",
+            isList: true
         }),
         sports: filter({
             title: "Sports",
@@ -464,7 +490,8 @@ export const getDefaultFilters = () => {
             sortCheckbox: false,
             sortAlphabetical: true,
             table: "Infobox_game",
-            column: "Sports"
+            column: "Sports",
+            isList: true
         }),
         vehicles: filter({
             title: "Vehicles",
@@ -495,13 +522,14 @@ export const getDefaultFilters = () => {
             sortCheckbox: false,
             sortAlphabetical: true,
             table: "Infobox_game",
-            column: "Vehicles"
+            column: "Vehicles",
+            isList: true
         }),
         license: filter({
             title: "License",
             options: options(
-                "commerical",
-                "former commerical",
+                "commercial",
+                "former commercial",
                 "freeware",
                 "free-to-play",
                 "shareware"

@@ -15,6 +15,20 @@ const title = ref("");
 const limit = 20;
 const moreAvailable = computed<boolean>(() => games.size > 0 && games.size >= roundGameCount(games.size, limit));
 
+// Remove duplicate games.
+// Duplicate games can occur when one game has multiple localization entries for the same language.
+const uniqueGames = computed<typeof games>(() => {
+    const addedGames = new Map<string, Awaited<ReturnType<typeof pcgw.searchGames>>[number]>();
+    const resultGames = new Map<number, Awaited<ReturnType<typeof pcgw.searchGames>>[number]>();
+    games.forEach((game, orderNum) => {
+        if (addedGames.has(game.pageId))
+            return;
+        resultGames.set(orderNum, game);
+        addedGames.set(game.pageId, game);
+    });
+    return resultGames;
+});
+
 const router = useRouter();
 
 const updateGames = async (append: boolean = false, count: number = limit) => {
@@ -85,7 +99,7 @@ onMounted(() => {
         <div class="gamesList">
             <h2>Games</h2>
             <ul>
-                <li v-for="[num, game] in games">
+                <li v-for="[num, game] in uniqueGames">
                     {{ game.page }}
                 </li>
             </ul>

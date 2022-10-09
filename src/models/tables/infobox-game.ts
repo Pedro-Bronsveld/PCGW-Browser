@@ -2,6 +2,7 @@ import type { Column } from "./column";
 import type { GenericTableStructure } from "./generic-table";
 
 export default interface InfoboxGameStructure extends GenericTableStructure {
+    "_pageID": Column<number, never, false>,
     "_pageName": Column<string, never, false>,
     "Cover": Column,
     "Cover_URL": Column,

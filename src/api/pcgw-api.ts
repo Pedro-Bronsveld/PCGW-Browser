@@ -20,21 +20,39 @@ export default class PCGWApi {
 
         const { inTitle, filters } = options;
         
-        const propColumnMap = createPropColumnMap("Infobox_game", {
+        const gamePropColumnMap = createPropColumnMap("Infobox_game", {
+            pageId: "_pageID",
             page: "_pageName",
             genres: "Genres",
             steamId: "Steam_AppID",
             gogId: "GOGcom_ID",
             releaseDate: "Released"
         });
+
+        const l10nPropColumnMap = createPropColumnMap("L10n", {
+            language: "Language"
+        });
+
+        console.log("filters:", filters);
         
         const params = createCargoQueryParams({
             origin: "*", 
             action: "cargoquery",
-            tables: "Infobox_game",
-            fields: createFieldsString(propColumnMap),
+            tables: [...new Set(
+                new Array().concat(
+                    Object.values(filters)
+                    .filter(anyOptionsEnabled)
+                    .map(filter => filter.table))
+                )].concat("Infobox_game").join(","),
+            ...(anyOptionsEnabled(filters.languages) ? {
+                join_on: "L10n._pageID=Infobox_game._pageID",
+            } : {}),
+            fields: [createFieldsString(gamePropColumnMap)]
+                .concat(anyOptionsEnabled(filters.languages) ? [createFieldsString(l10nPropColumnMap)] : [])
+                .join(","),
             where: getKeys(filters)
                 .map(key => filters[key])
+                .filter(filter => filter.table === "Infobox_game" || filter.table === "L10n" && filter.column === "Language")
                 .filter(anyOptionsEnabled)
                 .map(filter => `(${filterToWhereString(filter as unknown as Filter<(typeof filters)[keyof typeof filters]["table"]>)})`)
                 .concat(inTitle !== "" ? [createWhereString("Infobox_game", `_pageName LIKE '%${inTitle}%'`)] : [])
@@ -53,7 +71,7 @@ export default class PCGWApi {
         // Start measuring query time
         const startTime = performance.now();
 
-        const response: CargoQueryResponse<typeof propColumnMap> | CargoQueryError = await fetch(searchUrl, {
+        const response: CargoQueryResponse<typeof gamePropColumnMap> | CargoQueryError = await fetch(searchUrl, {
             method: "GET",
             cache: "force-cache",
             headers: {
@@ -71,9 +89,6 @@ export default class PCGWApi {
             throw response;
         else if (response.warnings !== undefined)
             console.warn("Warning in api response:", response.warnings);
-
-        response.cargoquery[0].title.page;
-        response.cargoquery[0].title.genres;
 
         const games = response.cargoquery.map(({ title }) => title);
         console.log("games:", games);

@@ -1,10 +1,7 @@
+import type { KeysMatchingType } from "@/utilities/matching-keys";
 import type { GenericColumn } from "../tables/column";
 import type { Tables, TableStructures } from "../tables/tables";
 import type { PropColumnMap } from "./prop-column-map";
-
-type KeysMatchingType<T extends Object, MatchType> = {
-    [Key in keyof T]: T[Key] extends MatchType ? Key : never;
-}[keyof T]
 
 type AllExtraPropsKeys<Structure extends TableStructures[keyof TableStructures]> = {
     [Key in keyof Structure]: Structure[Key] extends GenericColumn ? Structure[Key]["extraPropPostFix"] extends "" ? never : Key : never;

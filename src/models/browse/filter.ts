@@ -8,8 +8,10 @@ export type Filter<TableName extends keyof Tables> = {
     and: boolean;
     sortAlphabetical: boolean;
     sortCheckbox: boolean;
-    table: TableName & string,
-    column: keyof Tables[TableName] & string
+    table: TableName & string;
+    column: keyof Tables[TableName] & string;
+    isList?: boolean;
+    radio?: boolean;
 };
 
 export type GenericFilter = Filter<keyof Tables>

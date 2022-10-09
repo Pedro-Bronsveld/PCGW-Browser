@@ -25,7 +25,6 @@ export const createFieldsString: CreateFieldsString = (...mappings) =>
         .join(",")
     ).join(",");
 
-
 type SingleWhereString<TableName extends keyof Tables, TableColumn extends keyof Tables[TableName] & string> = 
     `${TableColumn}${" " | "="}${string}`
 
@@ -34,8 +33,8 @@ type CreateWhereString = <TableName extends (keyof Tables) & string>
 
 export const createWhereString: CreateWhereString = (tableName, queryString) => `${tableName}.${queryString}`;
     
-export const filterToWhereString = <TableName extends (keyof Tables) & string>(filter: Filter<TableName>) =>
+export const filterToWhereString = <TableName extends (keyof Tables) & string>(filter: Filter<TableName>, combineOperator?: " AND " | " OR ") =>
     [...filter.options.values()]
     .filter(option => option.enabled)
-    .map(option => createWhereString(filter.table, `${filter.column} HOLDS '${option.value}'`))
-    .join(filter.and ? " AND " : " OR ");
+    .map(option => createWhereString(filter.table, `${filter.column}${filter.isList === true ? " HOLDS " : "="}'${option.value}'`))
+    .join(combineOperator === undefined ? filter.and ? " AND " : " OR " : combineOperator);

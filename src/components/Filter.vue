@@ -1,14 +1,17 @@
 <script setup lang="ts">
 import { sortFilterOptions } from '@/browse/filter-options-util';
-import type { GenericFilter } from '@/models/browse/filter';
-import { computed, ref } from 'vue';
+import type { BrowseFilters } from '@/constants/default-filters';
+import { computed, ref, watch } from 'vue';
 
 const props = defineProps<{
-    filter: GenericFilter
+    filter: BrowseFilters[keyof BrowseFilters]
 }>();
 
 const showAll = ref(false);
 const nameMatch = ref("");
+// const picked = ref(props.filter.radio ? [...props.filter.options.values()].find(option => option.enabled)?.value ?? "" : "");
+const picked = ref("");
+const optionElements = new Map<number, HTMLInputElement>();
 
 const optionsList = computed(() => {
     const optionsList = [...props.filter.options.values()];
@@ -22,6 +25,25 @@ const optionsList = computed(() => {
     .includes(nameMatch.value.toLowerCase().trim()))
     }
 );
+
+// Logic for updating picked radio button when the filter object is modified somewhere else.
+const updatePicked = () => {
+    const pickedOption = [...props.filter.options.values()].find(option => option.enabled);
+    picked.value = pickedOption?.value ?? "";
+    optionElements.forEach((element, num) => {
+        element.checked = num === pickedOption?.number;
+    });
+}
+
+if (props.filter.radio)
+    watch(props.filter, updatePicked);
+
+const onOptionPicked = (number: number) => {
+    const pickedOption = props.filter.options.get(number);
+    props.filter.options.forEach(option => {
+        option.enabled = option.number === pickedOption?.number;
+    });
+}
 
 </script>
 
@@ -52,7 +74,8 @@ const optionsList = computed(() => {
     </div>
     <ul :class="{ reduce: !showAll }" class="optionsList">
         <li v-for="option in optionsList">
-            <input type="checkbox" v-model="option.enabled" />
+            <input v-if="filter.radio" :name="filter.title + '-radio'" type="radio" :ref="el => optionElements.set(option.number, el as HTMLInputElement)" :value="option.value" @input="onOptionPicked(option.number)" />
+            <input v-else type="checkbox" v-model="option.enabled" />
             {{ option.value }}
         </li>
     </ul>
