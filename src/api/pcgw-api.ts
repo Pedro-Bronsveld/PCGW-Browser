@@ -39,13 +39,13 @@ export default class PCGWApi {
             origin: "*", 
             action: "cargoquery",
             tables: [...new Set(
-                new Array().concat(
+                ["Infobox_game"].concat(
                     Object.values(filters)
                     .filter(anyOptionsEnabled)
                     .map(filter => filter.table))
-                )].concat("Infobox_game").join(","),
+                )].join(","),
             ...(anyOptionsEnabled(filters.languages) ? {
-                join_on: "L10n._pageID=Infobox_game._pageID",
+                join_on: "Infobox_game._pageID=L10n._pageID",
             } : {}),
             fields: [createFieldsString(gamePropColumnMap)]
                 .concat(anyOptionsEnabled(filters.languages) ? [createFieldsString(l10nPropColumnMap)] : [])

@@ -11,7 +11,7 @@ const showAll = ref(false);
 const nameMatch = ref("");
 // const picked = ref(props.filter.radio ? [...props.filter.options.values()].find(option => option.enabled)?.value ?? "" : "");
 const picked = ref("");
-const optionElements = new Map<number, HTMLInputElement>();
+const optionElements = new Map<number, HTMLInputElement | null>();
 
 const optionsList = computed(() => {
     const optionsList = [...props.filter.options.values()];
@@ -31,7 +31,8 @@ const updatePicked = () => {
     const pickedOption = [...props.filter.options.values()].find(option => option.enabled);
     picked.value = pickedOption?.value ?? "";
     optionElements.forEach((element, num) => {
-        element.checked = num === pickedOption?.number;
+        if (element !== null)
+            element.checked = num === pickedOption?.number;
     });
 }
 
@@ -74,7 +75,7 @@ const onOptionPicked = (number: number) => {
     </div>
     <ul :class="{ reduce: !showAll }" class="optionsList">
         <li v-for="option in optionsList">
-            <input v-if="filter.radio" :name="filter.title + '-radio'" type="radio" :ref="el => optionElements.set(option.number, el as HTMLInputElement)" :value="option.value" @input="onOptionPicked(option.number)" />
+            <input v-if="filter.radio" :name="filter.title + '-radio'" type="radio" :ref="el => optionElements.set(option.number, el as HTMLInputElement)" :value="option.value" @input="onOptionPicked(option.number)" :checked="option.enabled" />
             <input v-else type="checkbox" v-model="option.enabled" />
             {{ option.value }}
         </li>
