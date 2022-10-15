@@ -32,18 +32,23 @@ export default class PCGWApi {
         });
 
         const anyLanguageOptionsEnabled = anyOptionsEnabled(filters.languages);
+
+        const querriedTables = [...new Set(
+            ["Infobox_game"].concat(
+                Object.values(filters)
+                .filter(anyOptionsEnabled)
+                .map(filter => filter.table))
+            )];
         
         const params = createCargoQueryParams({
             origin: "*", 
             action: "cargoquery",
-            tables: [...new Set(
-                ["Infobox_game"].concat(
-                    Object.values(filters)
-                    .filter(anyOptionsEnabled)
-                    .map(filter => filter.table))
-                )].join(","),
-            ...(anyLanguageOptionsEnabled ? {
-                join_on: "Infobox_game._pageID=L10n._pageID",
+            tables: querriedTables.join(","),
+            ...(querriedTables.length > 1 ? {
+                join_on: querriedTables
+                    .filter(table => table !== "Infobox_game")
+                    .map(table => `Infobox_game._pageID=${table}._pageID`)
+                    .join(","),
             } : {}),
             fields: [createFieldsString(gamePropColumnMap)]
                 .concat(anyLanguageOptionsEnabled ? [createFieldsString(l10nPropColumnMap)] : [])

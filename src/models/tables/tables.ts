@@ -1,10 +1,12 @@
 import type InfoboxGameStructure from "./infobox-game";
+import type InputStructure from "./input";
 import type L10nStructure from "./l10n";
 import type { RawTable, Table } from "./table";
 
 export interface TableStructures {
     "Infobox_game": InfoboxGameStructure,
-    "L10n": L10nStructure
+    "L10n": L10nStructure,
+    "Input": InputStructure
 }
 
 export type RawTables = {

@@ -9,7 +9,6 @@ export type Filter<TableName extends keyof Tables> = {
     sortAlphabetical: boolean;
     sortCheckbox: boolean;
     table: TableName & string;
-    column: keyof Tables[TableName] & string;
     isList?: boolean;
     radio?: boolean;
 } & ({
@@ -17,6 +16,7 @@ export type Filter<TableName extends keyof Tables> = {
     enabledValues: readonly string[]
 } | {
     valuesAreColumns?: false,
+    column: keyof Tables[TableName] & string;
 });
 
 export type GenericFilter = Filter<keyof Tables>
