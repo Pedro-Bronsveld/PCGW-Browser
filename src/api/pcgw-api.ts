@@ -1,9 +1,7 @@
 import { anyOptionsEnabled } from "@/browse/filter-options-util";
-import type { BrowseFilters } from "@/constants/default-filters";
 import type { Filter } from "@/models/browse/filter";
 import type { SearchGamesOptions } from "@/models/browse/search-games-options";
 import type { CargoQueryError, CargoQueryResponse } from "@/models/cargo/cargo-query-response";
-import type { Tables } from "@/models/tables/tables";
 import { getKeys } from "@/utilities/objet-utils";
 import { createCargoQueryParams, createFieldsString, createPropColumnMap, createWhereString, filterToWhereString, languageSupportWhereString } from "./cargo-util";
 import { setUrlQueryParams } from "./url-util";
@@ -73,7 +71,10 @@ export default class PCGWApi {
         // Start measuring query time
         const startTime = performance.now();
 
-        const response: CargoQueryResponse<typeof gamePropColumnMap> | CargoQueryError = await fetch(searchUrl, {
+        const response: CargoQueryResponse<{
+            tableName: typeof gamePropColumnMap.tableName | typeof l10nPropColumnMap.tableName,
+            props: typeof gamePropColumnMap.props & Partial<typeof l10nPropColumnMap.props>
+        }> | CargoQueryError = await fetch(searchUrl, {
             method: "GET",
             cache: "force-cache",
             headers: {
