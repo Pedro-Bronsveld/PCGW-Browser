@@ -125,7 +125,9 @@ export const getDefaultFilters = () => {
             sortAlphabetical: false,
             sortCheckbox: false,
             table: "L10n",
-            column: "Interface"
+            column: "Interface",
+            valuesAreColumns: true,
+            enabledValues: ["true", "hackable", "limited"] as const
         }),
         controls: filter({
             title: "Controls",

@@ -12,7 +12,12 @@ export type Filter<TableName extends keyof Tables> = {
     column: keyof Tables[TableName] & string;
     isList?: boolean;
     radio?: boolean;
-};
+} & ({
+    valuesAreColumns: true,
+    enabledValues: readonly string[]
+} | {
+    valuesAreColumns?: false,
+});
 
 export type GenericFilter = Filter<keyof Tables>
 

@@ -3,7 +3,7 @@ import type { Filter } from "@/models/browse/filter";
 import type { SearchGamesOptions } from "@/models/browse/search-games-options";
 import type { CargoQueryError, CargoQueryResponse } from "@/models/cargo/cargo-query-response";
 import { getKeys } from "@/utilities/objet-utils";
-import { createCargoQueryParams, createFieldsString, createPropColumnMap, createWhereString, filterToWhereString, languageSupportWhereString } from "./cargo-util";
+import { createCargoQueryParams, createFieldsString, createPropColumnMap, createWhereString, filterToWhereString } from "./cargo-util";
 import { setUrlQueryParams } from "./url-util";
 
 export default class PCGWApi {
@@ -50,12 +50,9 @@ export default class PCGWApi {
                 .join(","),
             where: getKeys(filters)
                 .map(key => filters[key])
-                .filter(filter => filter.table === "Infobox_game" || filter.table === "L10n" && filter.column === "Language")
                 .filter(anyOptionsEnabled)
                 .map(filter => `(${filterToWhereString(filter as unknown as Filter<(typeof filters)[keyof typeof filters]["table"]>)})`)
                 .concat(inTitle !== "" ? [createWhereString("Infobox_game", `_pageName LIKE '%${inTitle}%'`)] : [])
-                .concat(anyLanguageOptionsEnabled && anyOptionsEnabled(filters.languageSupport) ? 
-                    `(${languageSupportWhereString(filters.languageSupport)})` : [])
                 .join(" AND "),
             limit: `${options.limit}`,
             ...(options.offset !== undefined && options.offset !== 0 ? {
