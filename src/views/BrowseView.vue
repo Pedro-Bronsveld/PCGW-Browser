@@ -6,7 +6,6 @@ import { useRoute, useRouter, type LocationQuery } from 'vue-router';
 import Filter from '../components/Filter.vue';
 import type { SearchGamesOptions } from '@/models/browse/search-games-options';
 import { searchGamesOptionsToQueryParams, queryParamsToSearchGamesOptions } from '@/browse/search-games-options-url';
-import { pageToUrl } from '@/browse/page-url';
 
 const pcgw = new PCGWApi();
 
@@ -101,7 +100,7 @@ onMounted(() => {
             <h2>Games ({{ uniqueGames.size }})</h2>
             <ul>
                 <li v-for="[num, game] in uniqueGames">
-                    <a :href="pageToUrl(game.page)">{{ game.page }}</a>
+                    <a :href="pcgw.pageToUrl(game.page)">{{ game.page }}</a>
                 </li>
             </ul>
             <input type="button" value="Load More" @click="loadMore" :disabled="!moreAvailable"/>

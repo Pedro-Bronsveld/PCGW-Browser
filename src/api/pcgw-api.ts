@@ -100,4 +100,8 @@ export default class PCGWApi {
         return games;
     }
 
+    public pageToUrl(page: string): string {
+        return `${this.base}/wiki/${page.replace(/ /g, "_")}`
+    }
+
 }
