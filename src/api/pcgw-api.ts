@@ -21,6 +21,7 @@ export default class PCGWApi {
         const gamePropColumnMap = createPropColumnMap("Infobox_game", {
             pageId: "_pageID",
             page: "_pageName",
+            coverUrl: "Cover_URL",
             genres: "Genres",
             steamId: "Steam_AppID",
             gogId: "GOGcom_ID",

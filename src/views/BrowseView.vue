@@ -6,6 +6,7 @@ import { useRoute, useRouter, type LocationQuery } from 'vue-router';
 import Filter from '../components/Filter.vue';
 import type { SearchGamesOptions } from '@/models/browse/search-games-options';
 import { searchGamesOptionsToQueryParams, queryParamsToSearchGamesOptions } from '@/browse/search-games-options-url';
+import { coverToThumbnailUrl } from '@/api/cover-url';
 
 const pcgw = new PCGWApi();
 
@@ -100,6 +101,7 @@ onMounted(() => {
             <h2>Games ({{ uniqueGames.size }})</h2>
             <ul>
                 <li v-for="[num, game] in uniqueGames">
+                    <img v-if="typeof game.coverUrl === 'string'" :src="coverToThumbnailUrl(game.coverUrl)" loading="lazy" decoding="async" />
                     <a :href="pcgw.pageToUrl(game.page)">{{ game.page }}</a>
                 </li>
             </ul>
