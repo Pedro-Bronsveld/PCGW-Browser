@@ -49,13 +49,7 @@ const onOptionPicked = (number: number) => {
 </script>
 
 <template>
-    <h3>{{ filter.title }}</h3>
-    <div>
-        <label v-if="filter.options.size >= 8">
-            <input type="checkbox" v-model="showAll">
-            Show all
-        </label>
-    </div>
+    <h3 class="filterTitle">{{ filter.title }}</h3>
     <div v-if="props.filter.sortCheckbox">
         <label>
             <input type="checkbox" v-model="props.filter.sortAlphabetical" />
@@ -68,24 +62,98 @@ const onOptionPicked = (number: number) => {
             {{ filter.and ? "And" : "Or" }}
         </label>
     </div>
-    <div v-if="props.filter.valueFilter">
-        <label>
-            <input type="text" autocomplete="off" placeholder="filter" v-model="nameMatch" />
+    <div v-if="filter.valueFilter">
+        <label class="nameFilterContainer">
+            <input class="nameFilter" type="text" autocomplete="off" placeholder="filter" v-model="nameMatch" />
         </label>
     </div>
-    <ul :class="{ reduce: !showAll }" class="optionsList">
-        <li v-for="option in optionsList">
-            <input v-if="filter.radio" :name="filter.title + '-radio'" type="radio" :ref="el => optionElements.set(option.number, el as HTMLInputElement)" :value="option.value" @input="onOptionPicked(option.number)" :checked="option.enabled" />
-            <input v-else type="checkbox" v-model="option.enabled" />
-            {{ option.value }}
-        </li>
-    </ul>
+    <div class="filterOptionsContainer">
+        <input :disabled="optionsList.length < 8" class="showAll" type="checkbox" v-model="showAll" title="Show all">
+        <ul :class="{ reduce: !showAll }" class="optionsList">
+            <li v-for="option in optionsList">
+                <label class="optionLabel">
+                    <input v-if="filter.radio" :name="filter.title + '-radio'" type="radio" :ref="el => optionElements.set(option.number, el as HTMLInputElement)" :value="option.value" @input="onOptionPicked(option.number)" :checked="option.enabled" />
+                    <input v-else type="checkbox" v-model="option.enabled" />
+                    {{ option.value }}
+                </label>
+            </li>
+        </ul>
+    </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+
+.filterTitle {
+    margin-left: 15px;
+}
+
+.filterOptionsContainer {
+    display: flex;
+}
+
+.showAll {
+    position: relative;
+    appearance: none;
+    display: block;
+    width: 20px;
+    margin: 0;
+    
+    &:enabled {
+        background-color: var(--grey-medium-light);
+        cursor: pointer;
+
+        &:hover {
+            background-color: var(--grey-medium);
+        }
+
+        &::after {
+            content: ">";
+            position: relative;
+            top: 100px;
+            left: 5px;
+        }
+    }
+
+    &:checked {
+        &::after {
+            content: "v";
+        }
+    }
+}
+
+.optionsList {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+
+    .optionLabel {
+        display: inline-block;
+        width: calc(100% - 5px);
+        cursor: pointer;
+        padding: 5px 0px;
+        padding-left: 5px;
+
+        input[type="checkbox"], input[type="radio"] {
+            cursor: pointer;
+        }
+
+        &:hover {
+            background-color: var(--grey-medium-light);
+        }
+    }
+}
 
 .optionsList.reduce>li:nth-of-type(1n+8) {
     display: none;
+}
+
+.nameFilterContainer {
+    display: inline-flex;
+    width: 100%;
+    justify-content: center;
+    .nameFilter {
+        margin: 10px;
+    }
 }
     
 </style>

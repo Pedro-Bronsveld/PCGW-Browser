@@ -90,18 +90,18 @@ onMounted(() => {
     <input type="Button" @click="updateGames()" value="Search" />
     <main class="browseViewContent">
         <div class="filtersList">
-            <h2>Filters</h2>
-            <h3>Title</h3>
+            <h2 class="heading">Filters</h2>
+            <h3 class="heading">Title</h3>
             <label>
                 <input type="text" autocomplete="off" placeholder="filter" v-model="title" />
             </label>
             <Filter v-for="filter in filters" :filter="filter" />
         </div>
         <div class="gamesList">
-            <h2>Games ({{ uniqueGames.size }})</h2>
+            <h2 class="heading">Games ({{ uniqueGames.size }})</h2>
             <ul>
-                <li v-for="[num, game] in uniqueGames">
-                    <img v-if="typeof game.coverUrl === 'string'" :src="coverToThumbnailUrl(game.coverUrl)" loading="lazy" decoding="async" />
+                <li class="game" v-for="[num, game] in uniqueGames">
+                    <img class="cover" v-if="typeof game.coverUrl === 'string'" :src="coverToThumbnailUrl(game.coverUrl)" loading="lazy" decoding="async" />
                     <a :href="pcgw.pageToUrl(game.page)">{{ game.page }}</a>
                 </li>
             </ul>
@@ -110,7 +110,11 @@ onMounted(() => {
     </main>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
+
+.heading {
+    margin-left: 15px;
+}
 
 .browseViewContent {
     display: flex;
@@ -122,14 +126,31 @@ onMounted(() => {
 .gamesList {
     flex-basis: 3;
     flex-grow: 1;
-    background-color: lightgray;
+    // background-color: var(--grey-light);
+
+    ul {
+        list-style: none;
+        padding: 0;
+        .game {
+            background-color: var(--grey-light);
+            margin: 10px 0px;
+            margin-left: 10px;
+        }
+    }
 }
 
 .filtersList {
     flex-basis: 1;
     flex-grow: 0;
     min-width: 200pt;
-    background-color: darkgray;
+    background-color: var(--grey-light);
+}
+
+.cover {
+    /* object-fit: cover; */
+    object-fit: contain;
+    width: 160px;
+    height: 160px;
 }
 
 </style>
