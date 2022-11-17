@@ -50,17 +50,21 @@ const onOptionPicked = (number: number) => {
 
 <template>
     <h3 class="filterTitle">{{ filter.title }}</h3>
-    <div v-if="props.filter.sortCheckbox">
-        <label>
-            <input type="checkbox" v-model="props.filter.sortAlphabetical" />
-            Sort alphabetical
-        </label>
-    </div>
-    <div v-if="filter.andCheckbox">
-        <label>
-            <input type="checkbox" v-model="filter.and" />
-            {{ filter.and ? "And" : "Or" }}
-        </label>
+    <div class="toggleContainer">
+        <input v-if="filter.andCheckbox" 
+            data-spacing="And" 
+            :data-text="filter.and ? 'And' : 'Or'" 
+            class="toggleCheckbox" 
+            type="checkbox" 
+            v-model="filter.and" 
+        />
+        <input v-if="props.filter.sortCheckbox" 
+            data-spacing="Sort Alphabetical" 
+            :data-text="filter.sortAlphabetical ? 'Sort Alphabetical' : 'Sort Default'"
+            class="textToggle" 
+            type="checkbox" 
+            v-model="filter.sortAlphabetical" 
+        />
     </div>
     <div v-if="filter.valueFilter">
         <label class="nameFilterContainer">
@@ -87,6 +91,10 @@ const onOptionPicked = (number: number) => {
     margin-left: 15px;
 }
 
+.toggleContainer {
+    display: flex;
+}
+
 .filterOptionsContainer {
     display: flex;
 }
@@ -103,7 +111,8 @@ const onOptionPicked = (number: number) => {
         cursor: pointer;
 
         &:hover {
-            background-color: var(--grey-medium);
+            background-color: var(--primary-8);
+            color: var(--primary-8-text);
         }
 
         &::after {

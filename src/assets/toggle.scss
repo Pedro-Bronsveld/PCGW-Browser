@@ -1,0 +1,75 @@
+.toggleCheckbox {
+    display: inline-flex;
+    min-width: 100px;
+    min-height: 30px;
+    appearance: none;
+    background-color: var(--primary-8);
+    flex-direction: column;
+    align-items: flex-start;
+    cursor: pointer;
+
+    &:hover {
+        background-color: var(--primary-5);
+    }
+
+    &:checked {
+        &::after {
+            left: calc(100% - 5px);
+            transform: translateX(-100%);
+        }
+    }
+
+    &::before {
+        content: attr(data-spacing);
+        padding-right: 50px;
+        color: rgba(0,0,0,0);
+        height: 0;
+        transform: scaleY(0);
+    }
+    
+    &::after {
+        content: attr(data-text);
+        transition: left 0.1s, transform 0.1s;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        top: 5px;
+        left: 5px;
+        min-width: 25px;
+        height: 20px;
+        padding: 0 10px;
+        background-color: var(--primary-0);
+    }
+}
+
+.textToggle {
+    position: relative;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    top: 0px;
+    left: 0px;
+    min-height: 30px;
+    padding: 0 15px;
+    cursor: pointer;
+    color: var(--primary-8-text);
+    background-color: var(--primary-8);
+
+    &:hover {
+        background-color: var(--primary-5);
+    }
+
+    &::before {
+        content: attr(data-spacing);
+        color: rgba(0,0,0,0);
+        height: 0;
+        transform: scaleY(0);
+    }
+
+    &::after {
+        content: attr(data-text);
+    }
+}
