@@ -93,6 +93,8 @@ const onOptionPicked = (number: number) => {
 
 .toggleContainer {
     display: flex;
+    justify-content: space-between;
+    margin: 0 15px;
 }
 
 .filterOptionsContainer {
@@ -102,12 +104,13 @@ const onOptionPicked = (number: number) => {
 .showAll {
     position: relative;
     appearance: none;
-    display: block;
+    display: flex;
     width: 20px;
     margin: 0;
     
     &:enabled {
         background-color: var(--grey-medium-light);
+        color: var(--grey-dark);
         cursor: pointer;
 
         &:hover {
@@ -116,16 +119,16 @@ const onOptionPicked = (number: number) => {
         }
 
         &::after {
-            content: ">";
+            content: "▶";
             position: relative;
             top: 100px;
-            left: 5px;
+            left: 3px;
         }
     }
 
     &:checked {
         &::after {
-            content: "v";
+            content: "▼";
         }
     }
 }
@@ -159,9 +162,9 @@ const onOptionPicked = (number: number) => {
 .nameFilterContainer {
     display: inline-flex;
     width: 100%;
-    justify-content: center;
+    justify-content: space-between;
     .nameFilter {
-        margin: 10px;
+        margin: 10px 15px;
     }
 }
     

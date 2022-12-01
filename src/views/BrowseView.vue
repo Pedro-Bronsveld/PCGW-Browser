@@ -92,20 +92,26 @@ onMounted(() => {
         <div class="filtersList">
             <h2 class="heading">Filters</h2>
             <h3 class="heading">Title</h3>
-            <label>
-                <input type="text" autocomplete="off" placeholder="filter" v-model="title" />
-            </label>
+            <div class="titleFilterContainer">
+                <label>
+                    <input class="titleFilter" type="text" autocomplete="off" placeholder="filter" v-model="title" />
+                </label>
+            </div>
             <Filter v-for="filter in filters" :filter="filter" />
         </div>
         <div class="gamesList">
             <h2 class="heading">Games ({{ uniqueGames.size }})</h2>
             <ul>
                 <li class="game" v-for="[num, game] in uniqueGames">
-                    <img class="cover" v-if="typeof game.coverUrl === 'string'" :src="coverToThumbnailUrl(game.coverUrl)" loading="lazy" decoding="async" />
-                    <a :href="pcgw.pageToUrl(game.page)">{{ game.page }}</a>
+                    <a class="gameLink" :href="pcgw.pageToUrl(game.page)">
+                        <img class="cover" v-if="typeof game.coverUrl === 'string'" :src="coverToThumbnailUrl(game.coverUrl)" loading="lazy" decoding="async" />
+                        {{ game.page }}
+                    </a>
                 </li>
             </ul>
-            <input type="button" value="Load More" @click="loadMore" :disabled="!moreAvailable"/>
+            <div classList="gamesListFooter">
+                <input type="button" value="Load More" @click="loadMore" :disabled="!moreAvailable"/>
+            </div>
         </div>
     </main>
 </template>
@@ -114,6 +120,15 @@ onMounted(() => {
 
 .heading {
     margin-left: 15px;
+}
+
+.titleFilterContainer {
+    display: flex;
+    justify-content: start;
+
+    .titleFilter {
+        margin: 0 15px;
+    }
 }
 
 .browseViewContent {
@@ -131,11 +146,31 @@ onMounted(() => {
     ul {
         list-style: none;
         padding: 0;
+
+        .gameLink {
+            display: flex;
+            width: 100%;
+            text-decoration: none;
+            align-items: center;
+
+            &:link, &:visited, &:hover, &:active {
+                text-decoration: none;
+                color: inherit;
+            }
+        }
+        
         .game {
             background-color: var(--grey-light);
             margin: 10px 0px;
             margin-left: 10px;
+            display: flex;
+            align-items: center;
         }
+    }
+
+    .gamesListFooter {
+        display: flex;
+        justify-content: center;
     }
 }
 
