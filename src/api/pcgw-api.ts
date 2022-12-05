@@ -2,6 +2,7 @@ import { anyOptionsEnabled } from "@/browse/filter-options-util";
 import type { Filter } from "@/models/browse/filter";
 import type { SearchGamesOptions } from "@/models/browse/search-games-options";
 import type { CargoQueryError, CargoQueryResponse } from "@/models/cargo/cargo-query-response";
+import type Game from "@/models/game";
 import { getKeys } from "@/utilities/objet-utils";
 import { createCargoQueryParams, createFieldsString, createPropColumnMap, createWhereString, filterToWhereString } from "./cargo-util";
 import { setUrlQueryParams } from "./url-util";
@@ -14,7 +15,7 @@ export default class PCGWApi {
         return new URL(this.basePath, this.base);
     }
 
-    public async searchGames(options: SearchGamesOptions) {
+    public async searchGames(options: SearchGamesOptions): Promise<Game[]> {
 
         const { inTitle, filters } = options;
         
@@ -96,7 +97,7 @@ export default class PCGWApi {
         else if (response.warnings !== undefined)
             console.warn("Warning in api response:", response.warnings);
 
-        const games = response.cargoquery.map(({ title }) => title);
+        const games: Game[] = response.cargoquery.map(({ title }) => title);
         console.log("games:", games);
         return games;
     }

@@ -7,10 +7,11 @@ import Filter from '../components/Filter.vue';
 import type { SearchGamesOptions } from '@/models/browse/search-games-options';
 import { searchGamesOptionsToQueryParams, queryParamsToSearchGamesOptions } from '@/browse/search-games-options-url';
 import { coverToThumbnailUrl } from '@/api/cover-url';
+import type Game from '@/models/game';
 
 const pcgw = new PCGWApi();
 
-const games = reactive<Map<number, Awaited<ReturnType<typeof pcgw.searchGames>>[number]>>(new Map());
+const games = reactive<Map<number, Game>>(new Map());
 const filters = reactive(getDefaultFilters());
 const title = ref("");
 const limit = 20;
@@ -19,8 +20,8 @@ const moreAvailable = computed<boolean>(() => games.size > 0 && games.size >= ro
 // Remove duplicate games.
 // Duplicate games can occur when one game has multiple localization entries for the same language.
 const uniqueGames = computed<typeof games>(() => {
-    const addedGames = new Map<string, Awaited<ReturnType<typeof pcgw.searchGames>>[number]>();
-    const resultGames = new Map<number, Awaited<ReturnType<typeof pcgw.searchGames>>[number]>();
+    const addedGames = new Map<string, Game>();
+    const resultGames = new Map<number, Game>();
     games.forEach((game, orderNum) => {
         if (addedGames.has(game.pageId))
             return;
