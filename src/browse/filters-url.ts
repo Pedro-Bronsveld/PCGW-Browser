@@ -1,5 +1,5 @@
 import type { BrowseFilters } from "@/constants/default-filters";
-import { fromEntries } from "@/utilities/objet-utils";
+import { fromEntries } from "@/utilities/object-utils";
 import type { LocationQuery } from "vue-router";
 
 export const filtersToQueryParams = (filters: BrowseFilters): Record<string, string> =>

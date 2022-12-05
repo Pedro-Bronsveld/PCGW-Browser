@@ -34,6 +34,8 @@ const uniqueGames = computed<typeof games>(() => {
 const router = useRouter();
 
 const updateGames = async (append: boolean = false, count: number = limit) => {
+    console.log("filters", filters);
+    console.log("filters keys", Object.keys(filters));
     const searchGamesOptions: SearchGamesOptions = {
         inTitle: title.value,
         filters,
