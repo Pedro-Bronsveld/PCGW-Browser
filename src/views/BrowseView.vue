@@ -9,17 +9,19 @@ import { searchGamesOptionsToQueryParams, queryParamsToSearchGamesOptions } from
 import { coverToThumbnailUrl } from '@/api/cover-url';
 import type Game from '@/models/game';
 import { deepCopyObject, objectsEqual } from '@/utilities/object-utils';
+import { getFiltersState } from '@/browse/filters-state';
 
 const pcgw = new PCGWApi();
 
 const games = reactive<Map<number, Game>>(new Map());
 const filters = reactive(getDefaultFilters());
-const activeFilters = ref(deepCopyObject(filters));
+const filtersState = computed(() => getFiltersState(filters));
+const activeFilters = ref(deepCopyObject(filtersState.value));
 const title = ref("");
 const activeTitle = ref("");
 const limit = 20;
 const moreAvailable = computed<boolean>(() => games.size > 0 && games.size >= roundGameCount(games.size, limit));
-const filtersEqual = computed(() => objectsEqual(filters, activeFilters.value) && title.value === activeTitle.value);
+const filtersEqual = computed(() => objectsEqual(filtersState.value, activeFilters.value) && title.value === activeTitle.value);
 
 // Remove duplicate games.
 // Duplicate games can occur when one game has multiple localization entries for the same language.
@@ -53,7 +55,7 @@ const updateGames = async (append: boolean = false, count: number = limit) => {
     });
 
     // Update query params with new search options values
-    activeFilters.value = deepCopyObject(filters);
+    activeFilters.value = deepCopyObject(filtersState.value);
     activeTitle.value = title.value;
     const newParams = searchGamesOptionsToQueryParams(searchGamesOptions, games.size > limit ? games.size : undefined);
     router.push({ name: "browse", query: newParams });
@@ -108,7 +110,7 @@ onMounted(() => {
             <h2 class="heading">Games ({{ uniqueGames.size }})</h2>
             <div class="filtersChanged" v-if="!filtersEqual">
                 <p>
-                    Search options have changed, run the search again to view updated results.
+                    Filter selections have changed, run the search again to view updated results.
                 </p>
                 <input type="button" @click="updateGames()" value="Search" />
             </div>
