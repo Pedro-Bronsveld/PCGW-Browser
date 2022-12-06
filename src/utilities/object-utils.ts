@@ -39,3 +39,16 @@ export const objectsEqual = (objA: Record<string, any>, objB: Record<string, any
 
     return true;
 }
+
+export const deepCopyObject = <Obj extends Object>(obj: Obj): Obj => {
+    const objCopy = { ...obj };
+    
+    getKeys(objCopy)
+    .filter(key => typeof objCopy[key] === "object")
+    .forEach(key => {
+        const nestedValue = objCopy[key];
+        objCopy[key] = deepCopyObject(nestedValue as typeof nestedValue & Object);
+    });
+    
+    return objCopy;
+}
