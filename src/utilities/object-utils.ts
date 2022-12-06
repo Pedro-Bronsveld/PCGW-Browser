@@ -1,3 +1,5 @@
+import { mapsEqual } from "./maps-equal";
+
 /**
  * Returns a list of all the properties in for a given object
  * in a type safe way.
@@ -25,9 +27,16 @@ export const objectsEqual = (objA: Record<string, any>, objB: Record<string, any
             return false;
 
         if (deep && typeof objA[key] === "object") {
-            const nestedEqual = objectsEqual(objA[key], objB[key], deep);
-            if (!nestedEqual)
-                return false;
+            if (objA[key] instanceof Map && objB[key] instanceof Map) {
+                const nestedEqual = mapsEqual(objA[key], objB[key]);
+                if (!nestedEqual)
+                    return false;
+            }
+            else {
+                const nestedEqual = objectsEqual(objA[key], objB[key], deep);
+                if (!nestedEqual)
+                    return false;
+            }
         }
         else if (typeof objA[key] !== "object") {
             // Check if the values of the given key are equal in
@@ -47,7 +56,16 @@ export const deepCopyObject = <Obj extends Object>(obj: Obj): Obj => {
     .filter(key => typeof objCopy[key] === "object")
     .forEach(key => {
         const nestedValue = objCopy[key];
-        objCopy[key] = deepCopyObject(nestedValue as typeof nestedValue & Object);
+        if (nestedValue instanceof Map) {
+            const mapCopy = new Map(nestedValue) as typeof nestedValue;
+            mapCopy.forEach((value, key) => {
+                if (typeof value === "object")
+                    mapCopy.set(key, deepCopyObject(value));
+            });
+            objCopy[key] = mapCopy;
+        }
+        else
+            objCopy[key] = deepCopyObject(nestedValue as typeof nestedValue & Object);
     });
     
     return objCopy;

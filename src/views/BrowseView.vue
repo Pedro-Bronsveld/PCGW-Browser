@@ -8,14 +8,18 @@ import type { SearchGamesOptions } from '@/models/browse/search-games-options';
 import { searchGamesOptionsToQueryParams, queryParamsToSearchGamesOptions } from '@/browse/search-games-options-url';
 import { coverToThumbnailUrl } from '@/api/cover-url';
 import type Game from '@/models/game';
+import { deepCopyObject, objectsEqual } from '@/utilities/object-utils';
 
 const pcgw = new PCGWApi();
 
 const games = reactive<Map<number, Game>>(new Map());
 const filters = reactive(getDefaultFilters());
+const activeFilters = ref(deepCopyObject(filters));
 const title = ref("");
+const activeTitle = ref("");
 const limit = 20;
 const moreAvailable = computed<boolean>(() => games.size > 0 && games.size >= roundGameCount(games.size, limit));
+const filtersEqual = computed(() => objectsEqual(filters, activeFilters.value) && title.value === activeTitle.value);
 
 // Remove duplicate games.
 // Duplicate games can occur when one game has multiple localization entries for the same language.
@@ -34,8 +38,6 @@ const uniqueGames = computed<typeof games>(() => {
 const router = useRouter();
 
 const updateGames = async (append: boolean = false, count: number = limit) => {
-    console.log("filters", filters);
-    console.log("filters keys", Object.keys(filters));
     const searchGamesOptions: SearchGamesOptions = {
         inTitle: title.value,
         filters,
@@ -51,6 +53,8 @@ const updateGames = async (append: boolean = false, count: number = limit) => {
     });
 
     // Update query params with new search options values
+    activeFilters.value = deepCopyObject(filters);
+    activeTitle.value = title.value;
     const newParams = searchGamesOptionsToQueryParams(searchGamesOptions, games.size > limit ? games.size : undefined);
     router.push({ name: "browse", query: newParams });
 };
@@ -89,8 +93,6 @@ onMounted(() => {
 </script>
 
 <template>
-    Browse View
-    <input type="Button" @click="updateGames()" value="Search" />
     <main class="browseViewContent">
         <div class="filtersList">
             <h2 class="heading">Filters</h2>
@@ -104,6 +106,12 @@ onMounted(() => {
         </div>
         <div class="gamesList">
             <h2 class="heading">Games ({{ uniqueGames.size }})</h2>
+            <div class="filtersChanged" v-if="!filtersEqual">
+                <p>
+                    Search options have changed, run the search again to view updated results.
+                </p>
+                <input type="button" @click="updateGames()" value="Search" />
+            </div>
             <ul>
                 <li class="game" v-for="[num, game] in uniqueGames">
                     <a class="gameLink" :href="pcgw.pageToUrl(game.page)">
@@ -146,6 +154,15 @@ onMounted(() => {
     flex-grow: 1;
     // background-color: var(--grey-light);
 
+    .filtersChanged {
+        position: sticky;
+        top: 0px;
+        background-color: var(--primary-1);
+        margin: 10px 0px;
+        margin-left: 10px;
+        padding: 15px;
+    }
+
     ul {
         list-style: none;
         padding: 0;
@@ -180,7 +197,7 @@ onMounted(() => {
 .filtersList {
     flex-basis: 1;
     flex-grow: 0;
-    min-width: 200pt;
+    min-width: 300px;
     background-color: var(--grey-light);
 }
 

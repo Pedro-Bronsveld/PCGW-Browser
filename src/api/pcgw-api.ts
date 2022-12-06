@@ -9,7 +9,7 @@ import { setUrlQueryParams } from "./url-util";
 
 export default class PCGWApi {
     private base: string = "https://www.pcgamingwiki.com";
-    private basePath: string = "w/api.php"
+    private basePath: string = "w/api.php";
     
     private get baseUrl(): URL {
         return new URL(this.basePath, this.base);

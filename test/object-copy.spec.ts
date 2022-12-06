@@ -10,7 +10,8 @@ describe("Deep object copy", () => {
             three: true,
             four: {
                 someProp: "hello, world"
-            }
+            },
+            five: new Map([["one", 1],["two", 2],["three", 3]])
         }
 
         const expectedCopy = {
@@ -19,7 +20,8 @@ describe("Deep object copy", () => {
             three: true,
             four: {
                 someProp: "hello, world"
-            }
+            },
+            five: new Map([["one", 1],["two", 2],["three", 3]])
         }
 
         const objectCopy = deepCopyObject(sourceObject);
