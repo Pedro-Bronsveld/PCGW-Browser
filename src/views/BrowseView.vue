@@ -10,6 +10,7 @@ import { coverToThumbnailUrl } from '@/api/cover-url';
 import type Game from '@/models/game';
 import { deepCopyObject, objectsEqual } from '@/utilities/object-utils';
 import { getFiltersState } from '@/browse/filters-state';
+import GameCard from '@/components/GameCard.vue';
 
 const pcgw = new PCGWApi();
 
@@ -116,10 +117,7 @@ onMounted(() => {
             </div>
             <ul>
                 <li class="game" v-for="[num, game] in uniqueGames">
-                    <a class="gameLink" :href="pcgw.pageToUrl(game.page)">
-                        <img class="cover" v-if="typeof game.coverUrl === 'string'" :src="coverToThumbnailUrl(game.coverUrl)" loading="lazy" decoding="async" />
-                        {{ game.page }}
-                    </a>
+                    <GameCard :game="game" />
                 </li>
             </ul>
             <div classList="gamesListFooter">
@@ -168,18 +166,6 @@ onMounted(() => {
     ul {
         list-style: none;
         padding: 0;
-
-        .gameLink {
-            display: flex;
-            width: 100%;
-            text-decoration: none;
-            align-items: center;
-
-            &:link, &:visited, &:hover, &:active {
-                text-decoration: none;
-                color: inherit;
-            }
-        }
         
         .game {
             background-color: var(--grey-light);
@@ -201,13 +187,6 @@ onMounted(() => {
     flex-grow: 0;
     min-width: 300px;
     background-color: var(--grey-light);
-}
-
-.cover {
-    /* object-fit: cover; */
-    object-fit: contain;
-    width: 160px;
-    height: 160px;
 }
 
 </style>

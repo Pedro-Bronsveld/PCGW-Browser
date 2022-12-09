@@ -1,4 +1,5 @@
 import { anyOptionsEnabled } from "@/browse/filter-options-util";
+import { PCGW_BASE } from "@/constants/base";
 import type { Filter } from "@/models/browse/filter";
 import type { SearchGamesOptions } from "@/models/browse/search-games-options";
 import type { CargoQueryError, CargoQueryResponse } from "@/models/cargo/cargo-query-response";
@@ -8,7 +9,7 @@ import { createCargoQueryParams, createFieldsString, createPropColumnMap, create
 import { setUrlQueryParams } from "./url-util";
 
 export default class PCGWApi {
-    private base: string = "https://www.pcgamingwiki.com";
+    private base: string = PCGW_BASE;
     private basePath: string = "w/api.php";
     
     private get baseUrl(): URL {
@@ -100,10 +101,6 @@ export default class PCGWApi {
         const games: Game[] = response.cargoquery.map(({ title }) => title);
         console.log("games:", games);
         return games;
-    }
-
-    public pageToUrl(page: string): string {
-        return `${this.base}/wiki/${page.replace(/ /g, "_")}`
     }
 
 }
