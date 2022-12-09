@@ -2,17 +2,32 @@
 import type Game from '@/models/game';
 import { coverToThumbnailUrl } from '@/api/cover-url';
 import { gamePageToUrl } from '@/api/page-to-url';
+import { computed } from 'vue';
 
 const props = defineProps<{
     game: Game
 }>();
+
+const releaseDateText = computed(() => [...new Set(
+        props.game.releaseDate?.split(";")
+        .map(d => {
+            const yearMatch = d.match(/[0-9]{4}/);
+            if (yearMatch)
+                return yearMatch[0]
+            return undefined;
+        })
+        .filter(d => d !== undefined)
+    )].join(" • "));
 
 </script>
 
 <template>
     <a class="gameLink" :href="gamePageToUrl(game.page)">
         <img class="cover" v-if="typeof game.coverUrl === 'string'" :src="coverToThumbnailUrl(game.coverUrl)" loading="lazy" decoding="async" />
-        {{ game.page }}
+        <div class="gameInfo">
+            <h3>{{ game.page }}</h3>
+            <p>{{ releaseDateText }}</p>
+        </div>
     </a>
 </template>
 
@@ -27,6 +42,10 @@ const props = defineProps<{
     &:link, &:visited, &:hover, &:active {
         text-decoration: none;
         color: inherit;
+    }
+
+    .gameInfo {
+        margin: 0 10px;
     }
 }
 
