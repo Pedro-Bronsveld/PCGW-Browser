@@ -15,10 +15,6 @@ const optionElements = new Map<number, HTMLInputElement | null>();
 
 const optionsList = computed(() => {
     const optionsList = [...props.filter.options.values()]
-        .map(option => ({
-            ...option,
-            value: option.value.replace(/_/g, " ")
-        }));
     if (props.filter.sortAlphabetical)
         sortFilterOptions(optionsList, "alphabetical");
     if (!props.filter.valueFilter)
@@ -82,7 +78,7 @@ const onOptionPicked = (number: number) => {
                 <label class="optionLabel">
                     <input v-if="filter.radio" :name="filter.title + '-radio'" type="radio" :ref="el => optionElements.set(option.number, el as HTMLInputElement)" :value="option.value" @input="onOptionPicked(option.number)" :checked="option.enabled" />
                     <input v-else type="checkbox" v-model="option.enabled" />
-                    <span class="optionValue">{{ option.value }}</span>
+                    <span class="optionValue">{{ option.value.replace(/_/g, " ") }}</span>
                 </label>
             </li>
         </ul>
