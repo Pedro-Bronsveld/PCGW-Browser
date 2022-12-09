@@ -6,11 +6,11 @@ import { useRoute, useRouter, type LocationQuery } from 'vue-router';
 import Filter from '../components/Filter.vue';
 import type { SearchGamesOptions } from '@/models/browse/search-games-options';
 import { searchGamesOptionsToQueryParams, queryParamsToSearchGamesOptions } from '@/browse/search-games-options-url';
-import { coverToThumbnailUrl } from '@/api/cover-url';
 import type Game from '@/models/game';
 import { deepCopyObject, objectsEqual } from '@/utilities/object-utils';
 import { getFiltersState } from '@/browse/filters-state';
 import GameCard from '@/components/GameCard.vue';
+import Loader from '@/components/Loader.vue';
 
 const pcgw = new PCGWApi();
 
@@ -23,6 +23,7 @@ const activeTitle = ref("");
 const limit = 20;
 const moreAvailable = computed<boolean>(() => games.size > 0 && games.size >= roundGameCount(games.size, limit));
 const filtersEqual = computed(() => objectsEqual(filtersState.value, activeFilters.value) && title.value === activeTitle.value);
+const updatingGames = ref(false);
 
 // Remove duplicate games.
 // Duplicate games can occur when one game has multiple localization entries for the same language.
@@ -41,6 +42,7 @@ const uniqueGames = computed<typeof games>(() => {
 const router = useRouter();
 
 const updateGames = async (append: boolean = false, count: number = limit) => {
+    updatingGames.value = true;
     const searchGamesOptions: SearchGamesOptions = {
         inTitle: title.value,
         filters,
@@ -59,6 +61,7 @@ const updateGames = async (append: boolean = false, count: number = limit) => {
     activeFilters.value = deepCopyObject(filtersState.value);
     activeTitle.value = title.value;
     const newParams = searchGamesOptionsToQueryParams(searchGamesOptions, games.size > limit ? games.size : undefined);
+    updatingGames.value = false;
     router.push({ name: "browse", query: newParams });
 };
 
@@ -121,7 +124,8 @@ onMounted(() => {
                 </li>
             </ul>
             <div classList="gamesListFooter">
-                <input type="button" value="Load More" @click="loadMore" :disabled="!moreAvailable"/>
+                <Loader v-if="updatingGames" />
+                <input v-else type="button" value="Load More" @click="loadMore" :disabled="!moreAvailable"/>
             </div>
         </div>
     </main>
@@ -179,6 +183,9 @@ onMounted(() => {
     .gamesListFooter {
         display: flex;
         justify-content: center;
+        align-items: center;
+        min-height: 80px;
+        margin-bottom: 50px;
     }
 }
 
