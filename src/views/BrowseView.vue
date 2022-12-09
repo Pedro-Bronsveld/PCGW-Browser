@@ -192,7 +192,7 @@ onMounted(() => {
 .filtersList {
     flex-basis: 1;
     flex-grow: 0;
-    min-width: 300px;
+    width: 300px;
     background-color: var(--grey-light);
 }
 

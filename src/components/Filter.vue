@@ -14,7 +14,11 @@ const picked = ref("");
 const optionElements = new Map<number, HTMLInputElement | null>();
 
 const optionsList = computed(() => {
-    const optionsList = [...props.filter.options.values()];
+    const optionsList = [...props.filter.options.values()]
+        .map(option => ({
+            ...option,
+            value: option.value.replace(/_/g, " ")
+        }));
     if (props.filter.sortAlphabetical)
         sortFilterOptions(optionsList, "alphabetical");
     if (!props.filter.valueFilter)
@@ -78,7 +82,7 @@ const onOptionPicked = (number: number) => {
                 <label class="optionLabel">
                     <input v-if="filter.radio" :name="filter.title + '-radio'" type="radio" :ref="el => optionElements.set(option.number, el as HTMLInputElement)" :value="option.value" @input="onOptionPicked(option.number)" :checked="option.enabled" />
                     <input v-else type="checkbox" v-model="option.enabled" />
-                    {{ option.value }}
+                    <span class="optionValue">{{ option.value }}</span>
                 </label>
             </li>
         </ul>
@@ -139,7 +143,7 @@ const onOptionPicked = (number: number) => {
     width: 100%;
 
     .optionLabel {
-        display: inline-block;
+        display: inline-flex;
         width: calc(100% - 5px);
         cursor: pointer;
         padding: 5px 0px;
@@ -151,6 +155,10 @@ const onOptionPicked = (number: number) => {
 
         &:hover {
             background-color: var(--grey-medium-light);
+        }
+
+        .optionValue {
+            margin: 0 10px;
         }
     }
 }
