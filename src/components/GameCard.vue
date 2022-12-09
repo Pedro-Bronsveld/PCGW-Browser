@@ -19,6 +19,11 @@ const releaseDateText = computed(() => [...new Set(
         .filter(d => d !== undefined)
     )].join(" • "));
 
+const genresText = computed(() => props.game.genres?.split(",")
+    .filter(genre => genre !== "")
+    .join(" • ")
+    || "");
+
 </script>
 
 <template>
@@ -27,6 +32,7 @@ const releaseDateText = computed(() => [...new Set(
         <div class="gameInfo">
             <h3>{{ game.page }}</h3>
             <p>{{ releaseDateText }}</p>
+            <p>{{ genresText }}</p>
         </div>
     </a>
 </template>

@@ -177,6 +177,10 @@ onMounted(() => {
             margin-left: 10px;
             display: flex;
             align-items: center;
+
+            &:hover {
+                background-color: var(--grey-medium-light);
+            }
         }
     }
 
