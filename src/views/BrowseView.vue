@@ -51,9 +51,9 @@ const updateGames = async (append: boolean = false, count: number = limit) => {
         limit: count,
         offset: append ? games.size : 0
     };
-    const gameResults = await pcgw.searchGames(searchGamesOptions);
     if(!append)
         games.clear();
+    const gameResults = await pcgw.searchGames(searchGamesOptions);
     const { size } = games;
     gameResults.forEach((game, num) => {
         games.set(num + size, game);
