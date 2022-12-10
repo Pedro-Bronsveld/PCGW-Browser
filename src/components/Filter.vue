@@ -99,7 +99,7 @@ const reset = () => {
 <style scoped lang="scss">
 
 .filterTitle {
-    margin-left: 15px;
+    margin: 13px 15px;
 }
 
 .toggleContainer {
@@ -148,6 +148,7 @@ const reset = () => {
     list-style: none;
     padding: 0;
     width: 100%;
+    margin: 10px 0;
 
     .optionLabel {
         display: inline-flex;

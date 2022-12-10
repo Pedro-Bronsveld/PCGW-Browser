@@ -113,7 +113,7 @@ onMounted(() => {
                 <h2 class="heading">Filters</h2>
                 <input type="button" @click="resetFilters" value="Reset Filters" :disabled="!enableResetFiltersButton" />
             </div>
-            <h3 class="heading">Title</h3>
+            <h3 class="filterHeading">Title</h3>
             <div class="filterContainer">
                 <label>
                     <input class="titleFilter" type="text" autocomplete="off" placeholder="filter" v-model="title" />
@@ -146,6 +146,10 @@ onMounted(() => {
 
 .heading {
     margin-left: 15px;
+}
+
+.filterHeading {
+    margin: 13px 15px;
 }
 
 .filterContainer {
