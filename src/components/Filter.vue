@@ -2,6 +2,8 @@
 import { sortFilterOptions } from '@/browse/filter-options-util';
 import type { BrowseFilters } from '@/constants/default-filters';
 import { computed, ref, watch } from 'vue';
+import { anyOptionsEnabled } from '@/browse/filter-options-util';
+import { resetBrowseFilter } from '@/browse/browse-filters-reset';
 
 const props = defineProps<{
     filter: BrowseFilters[keyof BrowseFilters]
@@ -9,9 +11,9 @@ const props = defineProps<{
 
 const showAll = ref(false);
 const nameMatch = ref("");
-// const picked = ref(props.filter.radio ? [...props.filter.options.values()].find(option => option.enabled)?.value ?? "" : "");
 const picked = ref("");
 const optionElements = new Map<number, HTMLInputElement | null>();
+const anyEnabled = computed(() => anyOptionsEnabled(props.filter) || props.filter.and);
 
 const optionsList = computed(() => {
     const optionsList = [...props.filter.options.values()]
@@ -46,6 +48,10 @@ const onOptionPicked = (number: number) => {
     });
 }
 
+const reset = () => {
+    resetBrowseFilter(props.filter);
+}
+
 </script>
 
 <template>
@@ -65,6 +71,11 @@ const onOptionPicked = (number: number) => {
             type="checkbox" 
             v-model="filter.sortAlphabetical" 
         />
+        <input
+            type="button"
+            @click="reset"
+            value="Reset"
+            :disabled="!anyEnabled" />
     </div>
     <div v-if="filter.valueFilter">
         <label class="nameFilterContainer">

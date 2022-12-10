@@ -11,12 +11,15 @@ import { deepCopyObject } from '@/utilities/object-utils';
 import { browseFiltersChanged } from '@/browse/browse-filters-changed';
 import GameCard from '@/components/GameCard.vue';
 import Loader from '@/components/Loader.vue';
+import { resetBrowseFilters } from '@/browse/browse-filters-reset';
+import { anyBrowseFilters } from '@/browse/browse-filters-any';
 
 const pcgw = new PCGWApi();
 
 const games = reactive<Map<number, Game>>(new Map());
 const filters = reactive(getDefaultFilters());
 const activeFilters = ref(deepCopyObject(filters));
+const enableResetFiltersButton = computed(() => anyBrowseFilters(filters) || title.value !== "");
 const title = ref("");
 const activeTitle = ref("");
 const limit = 20;
@@ -91,6 +94,12 @@ const loadMore = () => {
     updateGames(true);
 }
 
+const resetFilters = () => {
+    resetBrowseFilters(filters);
+    title.value = "";
+    updateGames();
+}
+
 onMounted(() => {
     onQueryParamsChanged(queryParams.value, true);
 });
@@ -100,9 +109,12 @@ onMounted(() => {
 <template>
     <main class="browseViewContent">
         <div class="filtersList">
-            <h2 class="heading">Filters</h2>
+            <div class="filtersListHeader">
+                <h2 class="heading">Filters</h2>
+                <input type="button" @click="resetFilters" value="Reset Filters" :disabled="!enableResetFiltersButton" />
+            </div>
             <h3 class="heading">Title</h3>
-            <div class="titleFilterContainer">
+            <div class="filterContainer">
                 <label>
                     <input class="titleFilter" type="text" autocomplete="off" placeholder="filter" v-model="title" />
                 </label>
@@ -113,7 +125,7 @@ onMounted(() => {
             <h2 class="heading">Games ({{ uniqueGames.size }})</h2>
             <div class="filtersChanged" v-if="!filtersEqual">
                 <p>
-                    Filter selections have changed, run the search again to view updated results.
+                    Filters have changed, run the search again to update results.
                 </p>
                 <input type="button" @click="updateGames()" value="Search" />
             </div>
@@ -136,13 +148,10 @@ onMounted(() => {
     margin-left: 15px;
 }
 
-.titleFilterContainer {
+.filterContainer {
     display: flex;
     justify-content: start;
-
-    .titleFilter {
-        margin: 0 15px;
-    }
+    margin: 0 15px;
 }
 
 .browseViewContent {
@@ -198,6 +207,13 @@ onMounted(() => {
     width: 300px;
     min-width: 300px;
     background-color: var(--grey-light);
+
+    .filtersListHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-right: 15px;
+    }
 }
 
 </style>

@@ -335,7 +335,7 @@ export const getDefaultFilters = () => {
             andCheckbox: true,
             and: false,
             sortAlphabetical: false,
-            sortCheckbox: true,
+            sortCheckbox: false,
             table: "Infobox_game",
             column: "Available_on",
             isList: true
