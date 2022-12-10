@@ -119,7 +119,10 @@ onMounted(() => {
                     <input class="titleFilter" type="text" autocomplete="off" placeholder="filter" v-model="title" />
                 </label>
             </div>
-            <Filter v-for="filter in filters" :filter="filter" />
+            <template v-for="filter in filters">
+                <div class="filterDivider"></div>
+                <Filter :filter="filter" />
+            </template>
         </div>
         <div class="gamesList">
             <h2 class="heading">Games ({{ uniqueGames.size }})</h2>
@@ -217,6 +220,14 @@ onMounted(() => {
         align-items: center;
         justify-content: space-between;
         margin-right: 15px;
+    }
+
+    .filterDivider {
+        display: block;
+        width: calc(100% - 70px);
+        height: 1px;
+        margin: 15px 35px;
+        background-color: var(--grey-medium);
     }
 }
 
