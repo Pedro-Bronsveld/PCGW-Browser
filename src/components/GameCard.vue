@@ -56,9 +56,10 @@ const genresText = computed(() => props.game.genres?.split(",")
 }
 
 .cover {
-    /* object-fit: cover; */
-    object-fit: contain;
+    object-fit: cover;
+    // object-fit: contain;
     width: 160px;
+    min-width: 160px;
     height: 160px;
 }
 

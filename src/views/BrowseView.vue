@@ -149,7 +149,7 @@ onMounted(() => {
 .browseViewContent {
     display: flex;
     justify-content: space-between;
-    max-width: 900px;
+    max-width: 1024px;
     margin: auto;
 }
 
@@ -194,9 +194,10 @@ onMounted(() => {
 }
 
 .filtersList {
-    flex-basis: 1;
+    flex-basis: 300px;
     flex-grow: 0;
     width: 300px;
+    min-width: 300px;
     background-color: var(--grey-light);
 }
 
