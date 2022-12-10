@@ -7,8 +7,8 @@ import Filter from '../components/Filter.vue';
 import type { SearchGamesOptions } from '@/models/browse/search-games-options';
 import { searchGamesOptionsToQueryParams, queryParamsToSearchGamesOptions } from '@/browse/search-games-options-url';
 import type Game from '@/models/game';
-import { deepCopyObject, objectsEqual } from '@/utilities/object-utils';
-import { getFiltersState } from '@/browse/filters-state';
+import { deepCopyObject } from '@/utilities/object-utils';
+import { browseFiltersChanged } from '@/browse/browse-filters-changed';
 import GameCard from '@/components/GameCard.vue';
 import Loader from '@/components/Loader.vue';
 
@@ -16,13 +16,12 @@ const pcgw = new PCGWApi();
 
 const games = reactive<Map<number, Game>>(new Map());
 const filters = reactive(getDefaultFilters());
-const filtersState = computed(() => getFiltersState(filters));
-const activeFilters = ref(deepCopyObject(filtersState.value));
+const activeFilters = ref(deepCopyObject(filters));
 const title = ref("");
 const activeTitle = ref("");
 const limit = 20;
 const moreAvailable = computed<boolean>(() => games.size > 0 && games.size >= roundGameCount(games.size, limit));
-const filtersEqual = computed(() => objectsEqual(filtersState.value, activeFilters.value) && title.value === activeTitle.value);
+const filtersEqual = computed(() => !browseFiltersChanged(filters, activeFilters.value) && title.value === activeTitle.value);
 const updatingGames = ref(false);
 
 // Remove duplicate games.
@@ -58,7 +57,7 @@ const updateGames = async (append: boolean = false, count: number = limit) => {
     });
 
     // Update query params with new search options values
-    activeFilters.value = deepCopyObject(filtersState.value);
+    activeFilters.value = deepCopyObject(filters);
     activeTitle.value = title.value;
     const newParams = searchGamesOptionsToQueryParams(searchGamesOptions, games.size > limit ? games.size : undefined);
     updatingGames.value = false;
