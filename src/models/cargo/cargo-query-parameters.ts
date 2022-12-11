@@ -10,7 +10,7 @@ export interface CargoQueryParameters {
     "where"?: string;
     "group_by"?: string;
     "having"?: string;
-    "order_by"?: `${AnyTableColumn} ${SortOrder}`;
+    "order_by"?: `${string} ${SortOrder}`;
     "limit"?: `${number}`;
     "offset"?: `${number}`;
     "default"?: string;

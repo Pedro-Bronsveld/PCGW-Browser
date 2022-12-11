@@ -13,6 +13,7 @@ import GameCard from '@/components/GameCard.vue';
 import Loader from '@/components/Loader.vue';
 import { resetBrowseFilters } from '@/browse/browse-filters-reset';
 import { anyBrowseFilters } from '@/browse/browse-filters-any';
+import { getDefaultGameSortOptions } from '@/constants/default-sort-options';
 
 const pcgw = new PCGWApi();
 
@@ -22,9 +23,17 @@ const activeFilters = ref(deepCopyObject(filters));
 const enableResetFiltersButton = computed(() => anyBrowseFilters(filters) || title.value !== "");
 const title = ref("");
 const activeTitle = ref("");
+const sortOptions = reactive(getDefaultGameSortOptions());
+const sortColumn = ref<keyof Game>("pageId");
+const activeSortColumn = ref<keyof Game>(sortColumn.value);
+const sortDescending = ref(false);
+const activeSortDescending = ref(sortDescending.value);
 const limit = 20;
 const moreAvailable = computed<boolean>(() => games.size > 0 && games.size >= roundGameCount(games.size, limit));
-const filtersEqual = computed(() => !browseFiltersChanged(filters, activeFilters.value) && title.value === activeTitle.value);
+const searchOptionsEqual = computed(() => !browseFiltersChanged(filters, activeFilters.value)
+    && title.value === activeTitle.value
+    && sortColumn.value === activeSortColumn.value
+    && sortDescending.value === activeSortDescending.value);
 const updatingGames = ref(false);
 
 // Remove duplicate games.
@@ -49,6 +58,8 @@ const updateGames = async (append: boolean = false, count: number = limit) => {
         inTitle: title.value,
         filters,
         limit: count,
+        sortColumn: sortColumn.value,
+        sortDescending: sortDescending.value,
         offset: append ? games.size : 0
     };
     if(!append)
@@ -59,9 +70,13 @@ const updateGames = async (append: boolean = false, count: number = limit) => {
         games.set(num + size, game);
     });
 
-    // Update query params with new search options values
+    // Update active options variables
     activeFilters.value = deepCopyObject(filters);
     activeTitle.value = title.value;
+    activeSortColumn.value = sortColumn.value;
+    activeSortDescending.value = sortDescending.value;
+    
+    // Update query params with new search options values
     const newParams = searchGamesOptionsToQueryParams(searchGamesOptions, games.size > limit ? games.size : undefined);
     updatingGames.value = false;
     router.push({ name: "browse", query: newParams });
@@ -125,8 +140,22 @@ onMounted(() => {
             </template>
         </div>
         <div class="gamesList">
-            <h2 class="heading">Games ({{ uniqueGames.size }})</h2>
-            <div class="filtersChanged" v-if="!filtersEqual">
+            <div class="gamesListHeader">
+                <h2 class="heading">Games ({{ uniqueGames.size }})</h2>
+                <div class="sorting">
+                    Sort:
+                    <select class="sortSelect" v-model="sortColumn">
+                        <option v-for="sortOption in sortOptions" :value="sortOption.value">{{ sortOption.label }}</option>
+                    </select>
+                    <input
+                        type="checkbox" 
+                        v-model="sortDescending"
+                        class="textToggle"
+                        :data-text="sortDescending ? 'Descending' : 'Ascending'"
+                        data-spacing="Descending" />
+                </div>
+            </div>
+            <div class="filtersChanged" v-if="!searchOptionsEqual">
                 <p>
                     Filters have changed, run the search again to update results.
                 </p>
@@ -172,6 +201,21 @@ onMounted(() => {
     flex-basis: 3;
     flex-grow: 1;
     // background-color: var(--grey-light);
+
+    .gamesListHeader {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+
+        .sorting {
+            margin-left: 10px;
+
+            .sortSelect {
+                margin-right: 5px;
+            }
+        }
+    }
 
     .filtersChanged {
         position: sticky;

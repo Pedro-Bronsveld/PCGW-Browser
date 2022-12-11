@@ -1,13 +1,13 @@
-import type { AnyTableColumn } from "../tables/tables";
+import type Game from "../game";
 
 export interface SortOption {
     label: string;
     value: string;
 }
 
-export type SortOrder = "ASC" | "DSC";
+export type SortOrder = "ASC" | "DESC";
 
 export interface GameSortOption {
     label: string;
-    value: AnyTableColumn
+    value: keyof Game;
 }

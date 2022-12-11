@@ -3,14 +3,14 @@ import type { GameSortOption } from "@/models/browse/sort-option";
 export const getDefaultGameSortOptions = (): GameSortOption[] => [
     {
         label: "Default",
-        value: "_pageID"
+        value: "pageId"
     },
     {
         label: "Title",
-        value: "_pageName"
+        value: "page"
     },
     {
         label: "Release Date",
-        value: "Released"
+        value: "releaseDate"
     }
 ]

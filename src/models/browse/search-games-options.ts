@@ -1,12 +1,11 @@
 import type { BrowseFilters } from "@/constants/default-filters";
-import type { AnyTableColumn } from "../tables/tables";
-import type { SortOrder } from "./sort-option";
+import type Game from "../game";
 
 export interface SearchGamesOptions {
     inTitle: string;
     filters: BrowseFilters;
     limit: number;
-    sortColumn?: AnyTableColumn;
+    sortColumn?: keyof Game;
     sortDescending?: boolean;
     offset?: number;
 }

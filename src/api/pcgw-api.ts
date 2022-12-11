@@ -67,9 +67,10 @@ export default class PCGWApi {
                 offset: `${options.offset}`
             } : {}),
             format: "json",
-            ...(sortColumn !== undefined && sortColumn !== "_pageID" || sortDescending ? {
-                order_by: `${ sortColumn === undefined ? "_pageID" : sortColumn } ${ sortDescending ? "DSC" : "ASC" }`
+            ...(sortColumn !== undefined && sortColumn !== "pageId" || sortDescending ? {
+                order_by: `${ sortColumn === undefined ? "pageId" : sortColumn } ${ sortDescending ? "DESC" : "ASC" }`
             } : {})
+            // order_by: "_pageID DESC"
         });
 
         console.log("params:", params)
