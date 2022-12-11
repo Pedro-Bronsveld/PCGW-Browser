@@ -1,4 +1,5 @@
-import type { Tables } from "../tables/tables";
+import type { SortOrder } from "../browse/sort-option";
+import type { AnyTableColumn } from "../tables/tables";
 
 export interface CargoQueryParameters {
     "origin": "*";
@@ -9,7 +10,7 @@ export interface CargoQueryParameters {
     "where"?: string;
     "group_by"?: string;
     "having"?: string;
-    "order_by"?: string;
+    "order_by"?: `${AnyTableColumn} ${SortOrder}`;
     "limit"?: `${number}`;
     "offset"?: `${number}`;
     "default"?: string;

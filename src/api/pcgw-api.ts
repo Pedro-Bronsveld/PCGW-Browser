@@ -18,7 +18,7 @@ export default class PCGWApi {
 
     public async searchGames(options: SearchGamesOptions): Promise<Game[]> {
 
-        const { inTitle, filters } = options;
+        const { inTitle, filters, sortColumn, sortDescending } = options;
         
         const gamePropColumnMap = createPropColumnMap("Infobox_game", {
             pageId: "_pageID",
@@ -66,7 +66,10 @@ export default class PCGWApi {
             ...(options.offset !== undefined && options.offset !== 0 ? {
                 offset: `${options.offset}`
             } : {}),
-            format: "json"
+            format: "json",
+            ...(sortColumn !== undefined && sortColumn !== "_pageID" || sortDescending ? {
+                order_by: `${ sortColumn === undefined ? "_pageID" : sortColumn } ${ sortDescending ? "DSC" : "ASC" }`
+            } : {})
         });
 
         console.log("params:", params)

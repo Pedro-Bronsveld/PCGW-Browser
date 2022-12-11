@@ -20,3 +20,7 @@ export type Tables = {
 export type AnyTable = {
     [Key in keyof Tables]: Tables[Key]
 }[keyof Tables];
+
+export type AnyTableColumn = {
+    [Key in keyof TableStructures]: keyof TableStructures[Key]
+}[keyof TableStructures];
