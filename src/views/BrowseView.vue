@@ -28,6 +28,7 @@ const sortColumn = ref<keyof Game>("pageId");
 const activeSortColumn = ref<keyof Game>(sortColumn.value);
 const sortDescending = ref(false);
 const activeSortDescending = ref(sortDescending.value);
+const sortIsDefault = computed(() => sortColumn.value === "pageId" && sortDescending.value === false);
 const limit = 20;
 const moreAvailable = computed<boolean>(() => games.size > 0 && games.size >= roundGameCount(games.size, limit));
 const searchOptionsEqual = computed(() => !browseFiltersChanged(filters, activeFilters.value)
@@ -77,7 +78,9 @@ const updateGames = async (append: boolean = false, count: number = limit) => {
     activeSortDescending.value = sortDescending.value;
     
     // Update query params with new search options values
+    console.log("activeSearchGamesOptions", searchGamesOptions);
     const newParams = searchGamesOptionsToQueryParams(searchGamesOptions, games.size > limit ? games.size : undefined);
+    console.log("newParams", newParams);
     updatingGames.value = false;
     router.push({ name: "browse", query: newParams });
 };
@@ -93,13 +96,17 @@ const onQueryParamsChanged = (locationQuery: LocationQuery, coldRun: boolean = f
     const searchGamesOptions: SearchGamesOptions = {
         inTitle: title.value,
         filters,
-        limit
+        limit,
+        sortColumn: sortColumn.value,
+        sortDescending: sortDescending.value
     };
     const searchGamesOptionsChanged = queryParamsToSearchGamesOptions(locationQuery, searchGamesOptions);
     console.log("searchGamesOptionsChanged", searchGamesOptionsChanged);
     const count = Number(locationQuery.limit) || limit;
     if (searchGamesOptionsChanged || count !== roundGameCount(games.size, limit) || coldRun) {
         title.value = searchGamesOptions.inTitle;
+        sortColumn.value = searchGamesOptions.sortColumn;
+        sortDescending.value = searchGamesOptions.sortDescending;
         updateGames(false, count);
     }
 }
@@ -112,6 +119,12 @@ const loadMore = () => {
 const resetFilters = () => {
     resetBrowseFilters(filters);
     title.value = "";
+    updateGames();
+}
+
+const resetSort = () => {
+    sortColumn.value = "pageId";
+    sortDescending.value = false;
     updateGames();
 }
 
@@ -150,9 +163,16 @@ onMounted(() => {
                     <input
                         type="checkbox" 
                         v-model="sortDescending"
-                        class="textToggle"
+                        class="textToggle sortToggle"
                         :data-text="sortDescending ? 'Descending' : 'Ascending'"
                         data-spacing="Descending" />
+                    <input 
+                        type="button"
+                        class="clearSort"
+                        value="Clear"
+                        @click="resetSort"
+                        :disabled="sortIsDefault"
+                    />
                 </div>
             </div>
             <div class="filtersChanged" v-if="!searchOptionsEqual">
@@ -200,7 +220,6 @@ onMounted(() => {
 .gamesList {
     flex-basis: 3;
     flex-grow: 1;
-    // background-color: var(--grey-light);
 
     .gamesListHeader {
         display: flex;
@@ -211,7 +230,7 @@ onMounted(() => {
         .sorting {
             margin-left: 10px;
 
-            .sortSelect {
+            .sortSelect, .sortToggle {
                 margin-right: 5px;
             }
         }

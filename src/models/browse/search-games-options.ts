@@ -5,7 +5,7 @@ export interface SearchGamesOptions {
     inTitle: string;
     filters: BrowseFilters;
     limit: number;
-    sortColumn?: keyof Game;
-    sortDescending?: boolean;
+    sortColumn: keyof Game;
+    sortDescending: boolean;
     offset?: number;
 }
