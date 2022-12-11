@@ -8,7 +8,7 @@ export const searchGamesOptionsToQueryParams = (searchGamesOptions: SearchGamesO
     ...(searchGamesOptions.inTitle !== "" ? {
         inTitle: searchGamesOptions.inTitle
     } : {}),
-    ...(searchGamesOptions.sortColumn !== undefined && searchGamesOptions.sortColumn !== "pageId" ? {
+    ...(searchGamesOptions.sortColumn !== "pageId" ? {
         sortColumn: searchGamesOptions.sortColumn
     } : {}),
     ...(searchGamesOptions.sortDescending ? {

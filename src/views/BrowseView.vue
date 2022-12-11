@@ -80,7 +80,6 @@ const updateGames = async (append: boolean = false, count: number = limit) => {
     // Update query params with new search options values
     console.log("activeSearchGamesOptions", searchGamesOptions);
     const newParams = searchGamesOptionsToQueryParams(searchGamesOptions, games.size > limit ? games.size : undefined);
-    console.log("newParams", newParams);
     updatingGames.value = false;
     router.push({ name: "browse", query: newParams });
 };
@@ -168,8 +167,8 @@ onMounted(() => {
                         data-spacing="Descending" />
                     <input 
                         type="button"
-                        class="clearSort"
-                        value="Clear"
+                        class="resetSort"
+                        value="Reset"
                         @click="resetSort"
                         :disabled="sortIsDefault"
                     />

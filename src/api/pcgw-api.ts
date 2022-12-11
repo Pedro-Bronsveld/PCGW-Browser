@@ -1,10 +1,10 @@
+import { filtersList } from "@/browse/browse-filters-list";
 import { anyOptionsEnabled } from "@/browse/filter-options-util";
 import { PCGW_BASE } from "@/constants/base";
 import type { Filter } from "@/models/browse/filter";
 import type { SearchGamesOptions } from "@/models/browse/search-games-options";
 import type { CargoQueryError, CargoQueryResponse } from "@/models/cargo/cargo-query-response";
 import type Game from "@/models/game";
-import { getKeys } from "@/utilities/object-utils";
 import { createCargoQueryParams, createFieldsString, createPropColumnMap, createWhereString, filterToWhereString } from "./cargo-util";
 import { setUrlQueryParams } from "./url-util";
 
@@ -56,21 +56,20 @@ export default class PCGWApi {
             fields: [createFieldsString(gamePropColumnMap)]
                 .concat(anyLanguageOptionsEnabled ? [createFieldsString(l10nPropColumnMap)] : [])
                 .join(","),
-            where: getKeys(filters)
-                .map(key => filters[key])
+            where: filtersList(filters)
                 .filter(anyOptionsEnabled)
                 .map(filter => `(${filterToWhereString(filter as unknown as Filter<(typeof filters)[keyof typeof filters]["table"]>)})`)
                 .concat(inTitle !== "" ? [createWhereString("Infobox_game", `_pageName LIKE '%${inTitle}%'`)] : [])
+                .concat(sortColumn === "releaseDate" && !sortDescending ? [createWhereString("Infobox_game", `Released HOLDS LIKE '%'`)] : [])
                 .join(" AND "),
             limit: `${options.limit}`,
             ...(options.offset !== undefined && options.offset !== 0 ? {
                 offset: `${options.offset}`
             } : {}),
             format: "json",
-            ...(sortColumn !== undefined && sortColumn !== "pageId" || sortDescending ? {
+            ...(sortColumn !== "pageId" || sortDescending ? {
                 order_by: `${ sortColumn === undefined ? "pageId" : sortColumn } ${ sortDescending ? "DESC" : "ASC" }`
             } : {})
-            // order_by: "_pageID DESC"
         });
 
         console.log("params:", params)
