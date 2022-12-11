@@ -30,7 +30,7 @@ const genresText = computed(() => props.game.genres?.split(",")
     <a class="gameLink" :href="gamePageToUrl(game.page)">
         <img class="cover" v-if="typeof game.coverUrl === 'string'" :src="coverToThumbnailUrl(game.coverUrl)" loading="lazy" decoding="async" />
         <div class="gameInfo">
-            <h3 class="gameTitle" >{{ game.page }}</h3>
+            <h3 class="gameTitle" v-html="game.page"></h3>
             <p>{{ releaseDateText }}</p>
             <p>{{ genresText }}</p>
         </div>
