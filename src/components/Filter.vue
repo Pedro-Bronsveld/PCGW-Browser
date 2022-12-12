@@ -72,6 +72,7 @@ const reset = () => {
             v-model="filter.sortAlphabetical" 
         />
         <input
+            class="secondary"
             type="button"
             @click="reset"
             value="Reset"

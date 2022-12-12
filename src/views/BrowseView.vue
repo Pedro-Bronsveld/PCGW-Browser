@@ -130,7 +130,7 @@ onMounted(() => {
         <div class="filtersList">
             <div class="filtersListHeader">
                 <h2 class="heading">Filters</h2>
-                <input type="button" @click="resetFilters()" value="Reset Filters" :disabled="!enableResetFiltersButton" />
+                <input class="secondary" type="button" @click="resetFilters()" value="Reset Filters" :disabled="!enableResetFiltersButton" />
             </div>
             <h3 class="filterHeading">Title</h3>
             <div class="filterContainer">
@@ -158,10 +158,7 @@ onMounted(() => {
                         }"
                         class="searchButton" @click="updateGames()" value="Run Search" />
                     <input type="button" 
-                        :class="{
-                            secondary: searchOptionsEqual
-                        }"
-                        class="resetAllButton" @click="resetAll" value="Reset All" :disabled="searchOptionsEqual" />
+                        class="resetAllButton secondary" @click="resetAll" value="Reset All" :disabled="searchOptionsEqual" />
                 </div>
             </div>
             <div class="gamesListHeader">
@@ -179,7 +176,7 @@ onMounted(() => {
                         data-spacing="Descending" />
                     <input 
                         type="button"
-                        class="resetSort"
+                        class="resetSort secondary"
                         value="Reset"
                         @click="resetSort()"
                         :disabled="sortIsDefault"
@@ -249,6 +246,7 @@ onMounted(() => {
         margin-bottom: 10px;
         padding: 15px;
         z-index: 10;
+        transition: box-shadow 0.1s;
 
         .searchHeaderButtons {
             display: flex;
@@ -258,6 +256,7 @@ onMounted(() => {
         &.optionsChanged {
             position: sticky;
             background-color: var(--primary-1);
+            box-shadow: 0px 2px 10px 0px var(--grey-medium-dark);
         }
     }
 
