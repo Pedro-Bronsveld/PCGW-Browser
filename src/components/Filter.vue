@@ -4,6 +4,7 @@ import type { BrowseFilters } from '@/constants/default-filters';
 import { computed, ref, watch } from 'vue';
 import { anyOptionsEnabled } from '@/browse/filter-options-util';
 import { resetBrowseFilter } from '@/browse/browse-filters-reset';
+import ResetButton from './ResetButton.vue';
 
 const props = defineProps<{
     filter: BrowseFilters[keyof BrowseFilters]
@@ -71,13 +72,11 @@ const reset = () => {
             type="checkbox" 
             v-model="filter.sortAlphabetical" 
         />
-        <input
-            class="secondary resetButton"
-            type="button"
-            @click="reset"
+        <ResetButton
+            value="Reset"
             title="Reset filter"
-            value="⮌"
-            :disabled="!anyEnabled" />
+            :disabled="!anyEnabled"
+            @click="reset" />
     </div>
     <div v-if="filter.valueFilter">
         <label class="nameFilterContainer">
@@ -184,10 +183,6 @@ const reset = () => {
     .nameFilter {
         margin: 10px 15px;
     }
-}
-
-.resetButton {
-    font-weight: bold;
 }
     
 </style>

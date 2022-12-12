@@ -14,6 +14,7 @@ import Loader from '@/components/Loader.vue';
 import { resetBrowseFilters } from '@/browse/browse-filters-reset';
 import { anyBrowseFilters } from '@/browse/browse-filters-any';
 import { getDefaultGameSortOptions } from '@/constants/default-sort-options';
+import ResetButton from '../components/ResetButton.vue';
 
 const pcgw = new PCGWApi();
 
@@ -130,12 +131,11 @@ onMounted(() => {
         <div class="filtersList">
             <div class="filtersListHeader">
                 <h2 class="heading">Filters</h2>
-                <input 
-                    class="secondary resetButton"
-                    type="button" @click="resetFilters()"
-                    value="⮌"
+                <ResetButton
+                    value="Reset Filters"
                     title="Reset all filters"
-                    :disabled="!enableResetFiltersButton" />
+                    :disabled="!enableResetFiltersButton"
+                    @click="resetFilters()" />
             </div>
             <h3 class="filterHeading">Title</h3>
             <div class="filterContainer">
@@ -159,12 +159,11 @@ onMounted(() => {
                             secondary: searchOptionsEqual
                         }"
                         class="searchButton" @click="updateGames()" value="Run Search" />
-                    <input type="button" 
-                        class="resetAllButton secondary resetButton"
-                        @click="resetAll"
-                        value="⮌"
+                    <ResetButton
+                        value="Reset"
                         title="Reset all search and sort options"
-                        :disabled="searchOptionsEqual && sortIsDefault" />
+                        :disabled="searchOptionsEqual && sortIsDefault"
+                        @click="resetAll" />
                 </div>
             </div>
             <div class="gamesListHeader">
@@ -180,14 +179,11 @@ onMounted(() => {
                         class="textToggle sortToggle"
                         :data-text="searchOptions.sortDescending ? 'Descending' : 'Ascending'"
                         data-spacing="Descending" />
-                    <input 
-                        type="button"
-                        class="resetSort secondary resetButton"
-                        value="⮌"
+                    <ResetButton
+                        value="Reset"
                         title="Reset sort option"
-                        @click="resetSort()"
                         :disabled="sortIsDefault"
-                    />
+                        @click="resetSort()" />
                 </div>
             </div>
             <ul>
@@ -314,10 +310,6 @@ onMounted(() => {
         margin: 15px 35px;
         background-color: var(--grey-medium);
     }
-}
-
-.resetButton {
-    font-weight: bold;
 }
 
 </style>
