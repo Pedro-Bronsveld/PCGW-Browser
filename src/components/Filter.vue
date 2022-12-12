@@ -107,7 +107,7 @@ const reset = () => {
 .toggleContainer {
     display: flex;
     justify-content: space-between;
-    margin: 0 15px;
+    margin: 5px 15px;
 }
 
 .filterOptionsContainer {
@@ -140,7 +140,6 @@ const reset = () => {
             position: relative;
             display: inline-block;
             top: 100px;
-            // left: 3px;
             width: 100%;
             text-align: center;
         }
