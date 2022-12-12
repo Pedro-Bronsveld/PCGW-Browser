@@ -100,16 +100,23 @@ const loadMore = () => {
     updateGames(true);
 }
 
-const resetFilters = () => {
+const resetFilters = (update = true) => {
     resetBrowseFilters(searchOptions.filters);
     searchOptions.inTitle = "";
-    updateGames();
+    if (update)
+        updateGames();
 }
 
-const resetSort = () => {
+const resetSort = (update = true) => {
     searchOptions.sortColumn = "pageId";
     searchOptions.sortDescending = false;
-    updateGames();
+    if (update)
+        updateGames();
+}
+
+const resetAll = () => {
+    resetFilters(false);
+    resetSort();
 }
 
 onMounted(() => {
@@ -123,7 +130,7 @@ onMounted(() => {
         <div class="filtersList">
             <div class="filtersListHeader">
                 <h2 class="heading">Filters</h2>
-                <input type="button" @click="resetFilters" value="Reset Filters" :disabled="!enableResetFiltersButton" />
+                <input type="button" @click="resetFilters()" value="Reset Filters" :disabled="!enableResetFiltersButton" />
             </div>
             <h3 class="filterHeading">Title</h3>
             <div class="filterContainer">
@@ -137,6 +144,26 @@ onMounted(() => {
             </template>
         </div>
         <div class="gamesList">
+            <div class="searchHeader" 
+                :class="{
+                    optionsChanged: !searchOptionsEqual
+                }">
+                <!-- <p>
+                    Search parameters have changed, run the search again to update results.
+                </p> -->
+                <div class="searchHeaderButtons">
+                    <input type="button" 
+                        :class="{
+                            secondary: searchOptionsEqual
+                        }"
+                        class="searchButton" @click="updateGames()" value="Run Search" />
+                    <input type="button" 
+                        :class="{
+                            secondary: searchOptionsEqual
+                        }"
+                        class="resetAllButton" @click="resetAll" value="Reset All" :disabled="searchOptionsEqual" />
+                </div>
+            </div>
             <div class="gamesListHeader">
                 <h2 class="heading">Games ({{ uniqueGames.size }})</h2>
                 <div class="sorting">
@@ -154,16 +181,10 @@ onMounted(() => {
                         type="button"
                         class="resetSort"
                         value="Reset"
-                        @click="resetSort"
+                        @click="resetSort()"
                         :disabled="sortIsDefault"
                     />
                 </div>
-            </div>
-            <div class="searchOptionsChanged" v-if="!searchOptionsEqual && !updatingGames">
-                <p>
-                    Search parameters have changed, run the search again to update results.
-                </p>
-                <input type="button" @click="updateGames()" value="Search" />
             </div>
             <ul>
                 <li class="game" v-for="[num, game] in uniqueGames">
@@ -220,13 +241,24 @@ onMounted(() => {
         }
     }
 
-    .searchOptionsChanged {
-        position: sticky;
+    .searchHeader {
         top: 0px;
-        background-color: var(--primary-1);
-        margin: 10px 0px;
+        background-color: var(--grey-light);
+        margin: 0px;
         margin-left: 10px;
+        margin-bottom: 10px;
         padding: 15px;
+        z-index: 10;
+
+        .searchHeaderButtons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        &.optionsChanged {
+            position: sticky;
+            background-color: var(--primary-1);
+        }
     }
 
     ul {

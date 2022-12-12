@@ -18,4 +18,21 @@ input[type="button"] {
         background-color: var(--primary-1);
         cursor: default;
     }
+
+    &.secondary {
+        background-color: var(--grey-dark);
+
+        &:hover {
+            background-color: var(--grey-medium-dark);
+        }
+    
+        &:active {
+            background-color: var(--grey-darkest);
+        }
+    
+        &:disabled {
+            background-color: var(--grey-medium-light);
+            cursor: default;
+        }
+    }
 }
