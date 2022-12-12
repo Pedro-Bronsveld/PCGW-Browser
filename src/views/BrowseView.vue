@@ -153,9 +153,6 @@ onMounted(() => {
                 :class="{
                     optionsChanged: !searchOptionsEqual
                 }">
-                <!-- <p>
-                    Search parameters have changed, run the search again to update results.
-                </p> -->
                 <div class="searchHeaderButtons">
                     <input type="button" 
                         :class="{
@@ -171,7 +168,7 @@ onMounted(() => {
                 </div>
             </div>
             <div class="gamesListHeader">
-                <h2 class="heading">Games ({{ uniqueGames.size }})</h2>
+                <h2 class="heading">Games</h2>
                 <div class="sorting">
                     Sort:
                     <select class="sortSelect" v-model="searchOptions.sortColumn">
