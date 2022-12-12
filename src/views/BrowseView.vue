@@ -159,7 +159,7 @@ onMounted(() => {
                     />
                 </div>
             </div>
-            <div class="searchOptionsChanged" v-if="!searchOptionsEqual">
+            <div class="searchOptionsChanged" v-if="!searchOptionsEqual && !updatingGames">
                 <p>
                     Search parameters have changed, run the search again to update results.
                 </p>
