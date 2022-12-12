@@ -155,7 +155,7 @@ onMounted(() => {
                     <ResetButton
                         value="Reset All"
                         title="Reset all search and sort options"
-                        :disabled="searchOptionsEqual && sortIsDefault"
+                        :disabled="!enableResetFiltersButton && sortIsDefault"
                         @click="resetAll" />
                 </div>
             </div>
