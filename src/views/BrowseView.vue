@@ -4,7 +4,7 @@ import { getDefaultFilters } from '@/constants/default-filters';
 import { computed, onMounted, reactive, ref, watch } from 'vue';
 import { useRoute, useRouter, type LocationQuery } from 'vue-router';
 import Filter from '../components/Filter.vue';
-import type { SearchGamesOptions } from '@/models/browse/search-games-options';
+import type { BaseSearchGamesOptions, SearchGamesOptions } from '@/models/browse/search-games-options';
 import { searchGamesOptionsToQueryParams, queryParamsToSearchGamesOptions } from '@/browse/search-games-options-url';
 import type Game from '@/models/game';
 import { deepCopyObject } from '@/utilities/object-utils';
@@ -18,24 +18,25 @@ import { getDefaultGameSortOptions } from '@/constants/default-sort-options';
 const pcgw = new PCGWApi();
 
 const games = reactive<Map<number, Game>>(new Map());
-const filters = reactive(getDefaultFilters());
-const activeFilters = ref(deepCopyObject(filters));
-const enableResetFiltersButton = computed(() => anyBrowseFilters(filters) || title.value !== "");
-const title = ref("");
-const activeTitle = ref("");
-const sortOptions = reactive(getDefaultGameSortOptions());
-const sortColumn = ref<keyof Game>("pageId");
-const activeSortColumn = ref<keyof Game>(sortColumn.value);
-const sortDescending = ref(false);
-const activeSortDescending = ref(sortDescending.value);
-const sortIsDefault = computed(() => sortColumn.value === "pageId" && sortDescending.value === false);
+const allSortOptions = reactive(getDefaultGameSortOptions());
 const limit = 20;
 const moreAvailable = computed<boolean>(() => games.size > 0 && games.size >= roundGameCount(games.size, limit));
-const searchOptionsEqual = computed(() => !browseFiltersChanged(filters, activeFilters.value)
-    && title.value === activeTitle.value
-    && sortColumn.value === activeSortColumn.value
-    && sortDescending.value === activeSortDescending.value);
 const updatingGames = ref(false);
+
+const searchOptions = reactive<BaseSearchGamesOptions>({
+    inTitle: "",
+    filters: getDefaultFilters(),
+    sortColumn: "pageId",
+    sortDescending: false,
+});
+const activeSearchOptions = ref(deepCopyObject(searchOptions));
+
+const sortIsDefault = computed(() => searchOptions.sortColumn === "pageId" && searchOptions.sortDescending === false);
+const enableResetFiltersButton = computed(() => anyBrowseFilters(searchOptions.filters) || searchOptions.inTitle !== "");
+const searchOptionsEqual = computed(() => !browseFiltersChanged(searchOptions.filters, activeSearchOptions.value.filters)
+    && searchOptions.inTitle === activeSearchOptions.value.inTitle
+    && searchOptions.sortColumn === activeSearchOptions.value.sortColumn
+    && searchOptions.sortDescending === activeSearchOptions.value.sortDescending);
 
 // Remove duplicate games.
 // Duplicate games can occur when one game has multiple localization entries for the same language.
@@ -56,11 +57,8 @@ const router = useRouter();
 const updateGames = async (append: boolean = false, count: number = limit) => {
     updatingGames.value = true;
     const searchGamesOptions: SearchGamesOptions = {
-        inTitle: title.value,
-        filters,
+        ...searchOptions,
         limit: count,
-        sortColumn: sortColumn.value,
-        sortDescending: sortDescending.value,
         offset: append ? games.size : 0
     };
     if(!append)
@@ -71,11 +69,8 @@ const updateGames = async (append: boolean = false, count: number = limit) => {
         games.set(num + size, game);
     });
 
-    // Update active options variables
-    activeFilters.value = deepCopyObject(filters);
-    activeTitle.value = title.value;
-    activeSortColumn.value = sortColumn.value;
-    activeSortDescending.value = sortDescending.value;
+    // Update active options variable
+    activeSearchOptions.value = deepCopyObject(searchOptions);
     
     // Update query params with new search options values
     console.log("activeSearchGamesOptions", searchGamesOptions);
@@ -92,20 +87,10 @@ const roundGameCount = (gameCount: number, baseLimit: number) => {
 const route = useRoute();
 const queryParams = computed(() => route.query);
 const onQueryParamsChanged = (locationQuery: LocationQuery, coldRun: boolean = false) => {
-    const searchGamesOptions: SearchGamesOptions = {
-        inTitle: title.value,
-        filters,
-        limit,
-        sortColumn: sortColumn.value,
-        sortDescending: sortDescending.value
-    };
-    const searchGamesOptionsChanged = queryParamsToSearchGamesOptions(locationQuery, searchGamesOptions);
+    const searchGamesOptionsChanged = queryParamsToSearchGamesOptions(locationQuery, searchOptions);
     console.log("searchGamesOptionsChanged", searchGamesOptionsChanged);
     const count = Number(locationQuery.limit) || limit;
     if (searchGamesOptionsChanged || count !== roundGameCount(games.size, limit) || coldRun) {
-        title.value = searchGamesOptions.inTitle;
-        sortColumn.value = searchGamesOptions.sortColumn;
-        sortDescending.value = searchGamesOptions.sortDescending;
         updateGames(false, count);
     }
 }
@@ -116,14 +101,14 @@ const loadMore = () => {
 }
 
 const resetFilters = () => {
-    resetBrowseFilters(filters);
-    title.value = "";
+    resetBrowseFilters(searchOptions.filters);
+    searchOptions.inTitle = "";
     updateGames();
 }
 
 const resetSort = () => {
-    sortColumn.value = "pageId";
-    sortDescending.value = false;
+    searchOptions.sortColumn = "pageId";
+    searchOptions.sortDescending = false;
     updateGames();
 }
 
@@ -143,10 +128,10 @@ onMounted(() => {
             <h3 class="filterHeading">Title</h3>
             <div class="filterContainer">
                 <label>
-                    <input class="titleFilter" type="text" autocomplete="off" placeholder="filter" v-model="title" />
+                    <input class="titleFilter" type="text" autocomplete="off" placeholder="filter" v-model="searchOptions.inTitle" />
                 </label>
             </div>
-            <template v-for="filter in filters">
+            <template v-for="filter in searchOptions.filters">
                 <div class="filterDivider"></div>
                 <Filter :filter="filter" />
             </template>
@@ -156,14 +141,14 @@ onMounted(() => {
                 <h2 class="heading">Games ({{ uniqueGames.size }})</h2>
                 <div class="sorting">
                     Sort:
-                    <select class="sortSelect" v-model="sortColumn">
-                        <option v-for="sortOption in sortOptions" :value="sortOption.value">{{ sortOption.label }}</option>
+                    <select class="sortSelect" v-model="searchOptions.sortColumn">
+                        <option v-for="sortOption in allSortOptions" :value="sortOption.value">{{ sortOption.label }}</option>
                     </select>
                     <input
                         type="checkbox" 
-                        v-model="sortDescending"
+                        v-model="searchOptions.sortDescending"
                         class="textToggle sortToggle"
-                        :data-text="sortDescending ? 'Descending' : 'Ascending'"
+                        :data-text="searchOptions.sortDescending ? 'Descending' : 'Ascending'"
                         data-spacing="Descending" />
                     <input 
                         type="button"
