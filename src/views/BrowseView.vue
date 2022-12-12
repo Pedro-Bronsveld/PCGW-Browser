@@ -159,9 +159,9 @@ onMounted(() => {
                     />
                 </div>
             </div>
-            <div class="filtersChanged" v-if="!searchOptionsEqual">
+            <div class="searchOptionsChanged" v-if="!searchOptionsEqual">
                 <p>
-                    Filters have changed, run the search again to update results.
+                    Search parameters have changed, run the search again to update results.
                 </p>
                 <input type="button" @click="updateGames()" value="Search" />
             </div>
@@ -220,7 +220,7 @@ onMounted(() => {
         }
     }
 
-    .filtersChanged {
+    .searchOptionsChanged {
         position: sticky;
         top: 0px;
         background-color: var(--primary-1);
