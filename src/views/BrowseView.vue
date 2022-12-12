@@ -130,7 +130,12 @@ onMounted(() => {
         <div class="filtersList">
             <div class="filtersListHeader">
                 <h2 class="heading">Filters</h2>
-                <input class="secondary" type="button" @click="resetFilters()" value="Reset Filters" :disabled="!enableResetFiltersButton" />
+                <input 
+                    class="secondary resetButton"
+                    type="button" @click="resetFilters()"
+                    value="⮌"
+                    title="Reset all filters"
+                    :disabled="!enableResetFiltersButton" />
             </div>
             <h3 class="filterHeading">Title</h3>
             <div class="filterContainer">
@@ -158,7 +163,11 @@ onMounted(() => {
                         }"
                         class="searchButton" @click="updateGames()" value="Run Search" />
                     <input type="button" 
-                        class="resetAllButton secondary" @click="resetAll" value="Reset All" :disabled="searchOptionsEqual" />
+                        class="resetAllButton secondary resetButton"
+                        @click="resetAll"
+                        value="⮌"
+                        title="Reset all search and sort options"
+                        :disabled="searchOptionsEqual" />
                 </div>
             </div>
             <div class="gamesListHeader">
@@ -176,8 +185,9 @@ onMounted(() => {
                         data-spacing="Descending" />
                     <input 
                         type="button"
-                        class="resetSort secondary"
-                        value="Reset"
+                        class="resetSort secondary resetButton"
+                        value="⮌"
+                        title="Reset sort option"
                         @click="resetSort()"
                         :disabled="sortIsDefault"
                     />
@@ -307,6 +317,10 @@ onMounted(() => {
         margin: 15px 35px;
         background-color: var(--grey-medium);
     }
+}
+
+.resetButton {
+    font-weight: bold;
 }
 
 </style>

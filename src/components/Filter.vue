@@ -72,10 +72,11 @@ const reset = () => {
             v-model="filter.sortAlphabetical" 
         />
         <input
-            class="secondary"
+            class="secondary resetButton"
             type="button"
             @click="reset"
-            value="Reset"
+            title="Reset filter"
+            value="⮌"
             :disabled="!anyEnabled" />
     </div>
     <div v-if="filter.valueFilter">
@@ -183,6 +184,10 @@ const reset = () => {
     .nameFilter {
         margin: 10px 15px;
     }
+}
+
+.resetButton {
+    font-weight: bold;
 }
     
 </style>
