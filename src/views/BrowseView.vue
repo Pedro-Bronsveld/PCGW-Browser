@@ -15,6 +15,7 @@ import { resetBrowseFilters } from '@/browse/browse-filters-reset';
 import { anyBrowseFilters } from '@/browse/browse-filters-any';
 import { getDefaultGameSortOptions } from '@/constants/default-sort-options';
 import ResetButton from '../components/ResetButton.vue';
+import MenuButton from '../components/MenuButton.vue';
 
 const pcgw = new PCGWApi();
 
@@ -23,6 +24,7 @@ const allSortOptions = reactive(getDefaultGameSortOptions());
 const limit = 20;
 const moreAvailable = computed<boolean>(() => games.size > 0 && games.size >= roundGameCount(games.size, limit));
 const updatingGames = ref(false);
+const openFiltersMenu = ref(false);
 
 const searchOptions = reactive<BaseSearchGamesOptions>({
     inTitle: "",
@@ -57,6 +59,7 @@ const router = useRouter();
 
 const updateGames = async (append: boolean = false, count: number = limit) => {
     updatingGames.value = true;
+    openFiltersMenu.value = false;
     const searchGamesOptions: SearchGamesOptions = {
         ...searchOptions,
         limit: count,
@@ -120,6 +123,10 @@ const resetAll = () => {
     resetSort();
 }
 
+const toggleFiltersMenu = () => {
+    openFiltersMenu.value = !openFiltersMenu.value;
+}
+
 onMounted(() => {
     onQueryParamsChanged(queryParams.value, true);
 });
@@ -127,82 +134,106 @@ onMounted(() => {
 </script>
 
 <template>
-    <main class="browseViewContent">
-        <div class="filtersList">
-            <div class="filtersListHeader">
-                <h2 class="heading">Filters</h2>
-                <ResetButton
-                    value="Reset Filters"
-                    title="Reset all filters"
-                    :disabled="!enableResetFiltersButton"
-                    @click="resetFilters()" />
-            </div>
-            <h3 class="filterHeading">Title</h3>
-            <div class="filterContainer">
-                <label>
-                    <input class="titleFilter" type="text" autocomplete="off" placeholder="filter" v-model="searchOptions.inTitle" />
-                </label>
-            </div>
-            <template v-for="filter in searchOptions.filters">
-                <div class="filterDivider"></div>
-                <Filter :filter="filter" />
-            </template>
-        </div>
-        <div class="gamesList">
-            <div class="searchHeader" 
-                :class="{
-                    optionsChanged: !searchOptionsEqual
-                }">
-                <div class="searchHeaderButtons">
+    <main class="page">
+        <div class="searchHeader"
+            :class="{
+                optionsChanged: !searchOptionsEqual
+            }">
+            <div class="searchHeaderButtons">
+                <div class="buttonGroup">
+                    <MenuButton @click="toggleFiltersMenu"
+                        :open="openFiltersMenu" />
                     <input type="button" 
                         :class="{
                             secondary: searchOptionsEqual
                         }"
-                        class="searchButton" @click="updateGames()" value="Run Search" />
+                        class="searchButton"
+                        @click="updateGames()"
+                        value="Run Search" />
+                </div>
+                <div class="buttonGroup">
                     <ResetButton
-                        value="Reset"
+                        value="Reset All"
                         title="Reset all search and sort options"
                         :disabled="searchOptionsEqual && sortIsDefault"
                         @click="resetAll" />
                 </div>
             </div>
-            <div class="gamesListHeader">
-                <h2 class="heading">Games</h2>
-                <div class="sorting">
-                    Sort:
-                    <select class="sortSelect" v-model="searchOptions.sortColumn">
-                        <option v-for="sortOption in allSortOptions" :value="sortOption.value">{{ sortOption.label }}</option>
-                    </select>
-                    <input
-                        type="checkbox" 
-                        v-model="searchOptions.sortDescending"
-                        class="textToggle sortToggle"
-                        :data-text="searchOptions.sortDescending ? 'Descending' : 'Ascending'"
-                        data-spacing="Descending" />
+        </div>
+        <div class="browseViewColumns">
+            <div class="filtersList"
+                :class="{
+                    open: openFiltersMenu
+                }">
+                <div class="filtersListHeader">
+                    <h2 class="heading">Filters</h2>
                     <ResetButton
-                        value="Reset"
-                        title="Reset sort option"
-                        :disabled="sortIsDefault"
-                        @click="resetSort()" />
+                        value="Reset Filters"
+                        title="Reset all filters"
+                        :disabled="!enableResetFiltersButton"
+                        @click="resetFilters()" />
+                </div>
+                <h3 class="filterHeading">Title</h3>
+                <div class="filterContainer">
+                    <label>
+                        <input class="titleFilter" type="text" autocomplete="off" placeholder="filter" v-model="searchOptions.inTitle" />
+                    </label>
+                </div>
+                <template v-for="filter in searchOptions.filters">
+                    <div class="filterDivider"></div>
+                    <Filter :filter="filter" />
+                </template>
+            </div>
+            <div class="gamesList"
+                :class="{
+                    open: openFiltersMenu
+                }">
+                <div class="gamesListHeader">
+                    <h2 class="heading">Games</h2>
+                    <div class="sorting">
+                        <span class="sortText" >Sort:</span>
+                        <select class="sortSelect" v-model="searchOptions.sortColumn">
+                            <option v-for="sortOption in allSortOptions" :value="sortOption.value">{{ sortOption.label }}</option>
+                        </select>
+                        <div class="sortButtons">
+                            <input
+                                type="checkbox" 
+                                v-model="searchOptions.sortDescending"
+                                class="textToggle sortToggle"
+                                :data-text="searchOptions.sortDescending ? 'Descending' : 'Ascending'"
+                                data-spacing="Descending" />
+                            <ResetButton
+                                value="Reset"
+                                title="Reset sort option"
+                                :disabled="sortIsDefault"
+                                @click="resetSort()" />
+                        </div>
+                    </div>
+                </div>
+                <ul>
+                    <li class="game" v-for="[num, game] in uniqueGames">
+                        <GameCard :game="game" />
+                    </li>
+                </ul>
+                <div classList="gamesListFooter">
+                    <Loader v-if="updatingGames" />
+                    <input v-else type="button" value="Load More" @click="loadMore" :disabled="!moreAvailable"/>
                 </div>
             </div>
-            <ul>
-                <li class="game" v-for="[num, game] in uniqueGames">
-                    <GameCard :game="game" />
-                </li>
-            </ul>
-            <div classList="gamesListFooter">
-                <Loader v-if="updatingGames" />
-                <input v-else type="button" value="Load More" @click="loadMore" :disabled="!moreAvailable"/>
-            </div>
+
         </div>
     </main>
 </template>
 
 <style scoped lang="scss">
+@use '../assets/screen';
 
 .heading {
     margin-left: 15px;
+
+    @include screen.very-narrow {
+        margin-left: 5px;
+    }
 }
 
 .filterHeading {
@@ -215,16 +246,58 @@ onMounted(() => {
     margin: 0 15px;
 }
 
-.browseViewContent {
+.page {
+    max-width: 1024px;
+    min-width: 300px;
+    margin: auto;
+}
+
+.browseViewColumns {
     display: flex;
     justify-content: space-between;
-    max-width: 1024px;
-    margin: auto;
+}
+
+.searchHeader {
+    top: 0px;
+    background-color: var(--grey-light);
+    margin: 0px;
+    margin-bottom: 10px;
+    z-index: 10;
+    transition: box-shadow 0.1s;
+    box-shadow: 0px 2px 10px 0px var(--grey-medium-dark);
+    position: sticky;
+
+
+    .searchHeaderButtons {
+        display: flex;
+        justify-content: space-between;
+        min-height: 62px;
+        margin: 0 15px;
+
+        @include screen.narrow {
+            margin-left: 0;
+        }
+
+        .buttonGroup {
+            display: flex;
+            align-items: center;
+        }
+    }
+
+    &.optionsChanged {
+        background-color: var(--primary-1);
+    }
 }
 
 .gamesList {
     flex-basis: 3;
     flex-grow: 1;
+
+    &.open {
+        @include screen.narrow {
+            display: none;
+        }
+    }
 
     .gamesListHeader {
         display: flex;
@@ -233,33 +306,29 @@ onMounted(() => {
         flex-wrap: wrap;
 
         .sorting {
+            display: flex;
+            @include screen.very-narrow {
+                display: block;
+                margin-left: 0;
+            }
+            align-items: center;
+            flex-wrap: wrap;
             margin-left: 10px;
+            justify-content: end;
 
-            .sortSelect, .sortToggle {
+            .sortText, .sortSelect, .sortToggle {
                 margin-right: 5px;
             }
-        }
-    }
 
-    .searchHeader {
-        top: 0px;
-        background-color: var(--grey-light);
-        margin: 0px;
-        margin-left: 10px;
-        margin-bottom: 10px;
-        padding: 15px;
-        z-index: 10;
-        transition: box-shadow 0.1s;
-
-        .searchHeaderButtons {
-            display: flex;
-            justify-content: space-between;
-        }
-
-        &.optionsChanged {
-            position: sticky;
-            background-color: var(--primary-1);
-            box-shadow: 0px 2px 10px 0px var(--grey-medium-dark);
+            .sortButtons {
+                display: flex;
+                // width: 100%;
+                
+                input[type="button"], input[type="checkbox"] {
+                    margin-top: 5px;
+                    margin-bottom: 5px;
+                }
+            }
         }
     }
 
@@ -276,6 +345,10 @@ onMounted(() => {
 
             &:hover {
                 background-color: var(--grey-medium-light);
+            }
+
+            @include screen.narrow {
+                margin-left: 0;
             }
         }
     }
@@ -295,6 +368,17 @@ onMounted(() => {
     width: 300px;
     min-width: 300px;
     background-color: var(--grey-light);
+
+    @include screen.narrow {
+        &:not(.open) {
+            display: none;
+        }
+
+        width: 100%;
+        flex-grow: 1;
+
+        min-width: 300px;
+    }
 
     .filtersListHeader {
         display: flex;

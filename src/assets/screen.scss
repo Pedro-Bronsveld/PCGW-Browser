@@ -1,0 +1,7 @@
+@mixin narrow {
+    @media (max-width: 700px) { @content; }
+}
+
+@mixin very-narrow {
+    @media (max-width: 400px) { @content; }
+}

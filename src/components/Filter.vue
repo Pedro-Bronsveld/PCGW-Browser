@@ -98,6 +98,7 @@ const reset = () => {
 </template>
 
 <style scoped lang="scss">
+@use '../assets/screen.scss';
 
 .filterTitle {
     margin: 13px 15px;
@@ -119,6 +120,10 @@ const reset = () => {
     display: flex;
     width: 20px;
     margin: 0;
+
+    @include screen.narrow {
+        width: 40px;
+    }
     
     &:enabled {
         background-color: var(--grey-medium-light);
@@ -133,8 +138,11 @@ const reset = () => {
         &::after {
             content: "▶";
             position: relative;
+            display: inline-block;
             top: 100px;
-            left: 3px;
+            // left: 3px;
+            width: 100%;
+            text-align: center;
         }
     }
 

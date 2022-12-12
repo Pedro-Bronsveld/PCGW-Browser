@@ -13,11 +13,11 @@ const emit = defineEmits<{
 </script>
 
 <template>
-        <input
-            class="secondary resetButton"
-            type="button"
-            @click="emit('click')"
-            :title="title"
-            :value="value"
-            :disabled="disabled" />
+    <input
+        class="secondary resetButton"
+        type="button"
+        @click="emit('click')"
+        :title="title"
+        :value="value"
+        :disabled="disabled" />
 </template>

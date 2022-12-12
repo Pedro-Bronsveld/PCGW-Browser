@@ -38,6 +38,7 @@ const genresText = computed(() => props.game.genres?.split(",")
 </template>
 
 <style scoped lang="scss">
+@use '../assets/screen.scss';
 
 .gameLink {
     display: flex;
@@ -61,10 +62,14 @@ const genresText = computed(() => props.game.genres?.split(",")
 
 .cover {
     object-fit: cover;
-    // object-fit: contain;
     width: 160px;
     min-width: 160px;
     height: 160px;
+
+    @include screen.very-narrow {
+        min-width: 100px;
+        width: 100px;
+    }
 }
 
 </style>
