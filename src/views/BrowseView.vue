@@ -164,7 +164,7 @@ onMounted(() => {
                         @click="resetAll"
                         value="⮌"
                         title="Reset all search and sort options"
-                        :disabled="searchOptionsEqual" />
+                        :disabled="searchOptionsEqual && sortIsDefault" />
                 </div>
             </div>
             <div class="gamesListHeader">
