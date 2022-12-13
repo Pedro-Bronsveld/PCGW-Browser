@@ -216,8 +216,11 @@ onMounted(() => {
                     </li>
                 </ul>
                 <div classList="gamesListFooter">
+                    <p v-if="!updatingGames && games.size === 0" class="noResultsMessage">
+                        No games were found for the given search parameters.
+                    </p>
                     <Loader v-if="updatingGames" />
-                    <input v-else type="button" value="Load More" @click="loadMore" :disabled="!moreAvailable"/>
+                    <input v-else-if="games.size > 0" type="button" value="Load More" @click="loadMore" :disabled="!moreAvailable"/>
                 </div>
             </div>
 
@@ -358,6 +361,11 @@ onMounted(() => {
         align-items: center;
         min-height: 80px;
         margin-bottom: 50px;
+
+        .noResultsMessage {
+            text-align: center;
+            margin: 16px;
+        }
     }
 }
 
