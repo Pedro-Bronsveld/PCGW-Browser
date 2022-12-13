@@ -53,9 +53,11 @@ const genresText = computed(() => props.game.genres?.split(",")
 
     .gameInfo {
         margin: 0 10px;
+        width: 100%;
 
         .gameTitle {
             font-weight: normal;
+            overflow-wrap: anywhere;
         }
     }
 }

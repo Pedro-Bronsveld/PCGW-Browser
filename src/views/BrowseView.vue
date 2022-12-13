@@ -322,7 +322,6 @@ onMounted(() => {
 
             .sortButtons {
                 display: flex;
-                // width: 100%;
                 
                 input[type="button"], input[type="checkbox"] {
                     margin-top: 5px;
