@@ -53,47 +53,58 @@ const reset = () => {
     resetBrowseFilter(props.filter);
 }
 
+const toggleCollapse = () => props.filter.collapse = !props.filter.collapse;
+
 </script>
 
 <template>
-    <h3 class="filterTitle">{{ filter.title }}</h3>
-    <div class="toggleContainer">
-        <input v-if="filter.andCheckbox" 
-            data-spacing="And" 
-            :data-text="filter.and ? 'And' : 'Or'" 
-            class="toggleCheckbox" 
-            type="checkbox" 
-            v-model="filter.and" 
-        />
-        <input v-if="props.filter.sortCheckbox" 
-            data-spacing="Sort Alphabetical" 
-            :data-text="filter.sortAlphabetical ? 'Sort Alphabetical' : 'Sort Default'"
-            class="textToggle" 
-            type="checkbox" 
-            v-model="filter.sortAlphabetical" 
-        />
-        <ResetButton
-            value="Reset"
-            title="Reset filter"
-            :disabled="!anyEnabled"
-            @click="reset" />
-    </div>
-    <div v-if="filter.valueFilter">
-        <label class="nameFilterContainer">
-            <input class="nameFilter" type="text" autocomplete="off" placeholder="filter" v-model="nameMatch" />
-        </label>
-    </div>
-    <div class="filterOptionsContainer">
-        <input :disabled="optionsList.length < 8" class="showAll" type="checkbox" v-model="showAll" title="Show all">
-        <ul :class="{ reduce: !showAll }" class="optionsList">
-            <li v-for="option in optionsList">
-                <label class="optionLabel">
-                    <input v-if="filter.radio" :name="filter.title + '-radio'" type="radio" :ref="el => optionElements.set(option.number, el as HTMLInputElement)" :value="option.value" @input="onOptionPicked(option.number)" :checked="option.enabled" />
-                    <input v-else type="checkbox" v-model="option.enabled" />
-                    <span class="optionValue">{{ option.value.replace(/_/g, " ") }}</span>
-                </label>
-            </li>
-        </ul>
+    <h3 class="filterTitle"
+    @click="toggleCollapse"
+    :class="{
+        collapse: filter.collapse
+    }" >{{ filter.title }}</h3>
+    <div class="filterContent"
+        :class="{
+            collapse: filter.collapse
+        }" >
+        <div class="toggleContainer">
+            <input v-if="filter.andCheckbox" 
+                data-spacing="And" 
+                :data-text="filter.and ? 'And' : 'Or'" 
+                class="toggleCheckbox" 
+                type="checkbox" 
+                v-model="filter.and" 
+            />
+            <input v-if="props.filter.sortCheckbox" 
+                data-spacing="Sort Alphabetical" 
+                :data-text="filter.sortAlphabetical ? 'Sort Alphabetical' : 'Sort Default'"
+                class="textToggle" 
+                type="checkbox" 
+                v-model="filter.sortAlphabetical" 
+            />
+            <ResetButton
+                value="Reset"
+                title="Reset filter"
+                :disabled="!anyEnabled"
+                @click="reset" />
+        </div>
+        <div v-if="filter.valueFilter">
+            <label class="nameFilterContainer">
+                <input class="nameFilter" type="text" autocomplete="off" placeholder="filter" v-model="nameMatch" />
+            </label>
+        </div>
+        <div class="filterOptionsContainer">
+            <input :disabled="optionsList.length < 8" class="showAll" type="checkbox" v-model="showAll" title="Show all">
+            <ul :class="{ reduce: !showAll }" class="optionsList">
+                <li v-for="option in optionsList">
+                    <label class="optionLabel">
+                        <input v-if="filter.radio" :name="filter.title + '-radio'" type="radio" :ref="el => optionElements.set(option.number, el as HTMLInputElement)" :value="option.value" @input="onOptionPicked(option.number)" :checked="option.enabled" />
+                        <input v-else type="checkbox" v-model="option.enabled" />
+                        <span class="optionValue">{{ option.value.replace(/_/g, " ") }}</span>
+                    </label>
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
 
@@ -102,6 +113,27 @@ const reset = () => {
 
 .filterTitle {
     margin: 13px 15px;
+    cursor: pointer;
+
+    &::before {
+        content: '❯';
+        display: inline-block;
+        width: 25px;
+        transform: rotate(90deg);
+        text-align: center;
+    }
+
+    &.collapse {
+        &::before {
+            transform: rotate(0deg);
+        }
+    }
+}
+
+.filterContent {
+    &.collapse {
+        display: none;
+    }
 }
 
 .toggleContainer {
@@ -141,6 +173,7 @@ const reset = () => {
             display: inline-block;
             top: 100px;
             width: 100%;
+            max-height: 20px;
             text-align: center;
         }
     }

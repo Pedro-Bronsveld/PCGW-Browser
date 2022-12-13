@@ -110,6 +110,7 @@ export const getDefaultFilters = () => {
             sortCheckbox: true,
             table: "L10n",
             column: "Language",
+            collapse: false,
             radio: true
         }),
         languageSupport: filter({
@@ -125,6 +126,7 @@ export const getDefaultFilters = () => {
             sortAlphabetical: false,
             sortCheckbox: false,
             table: "L10n",
+            collapse: false,
             valuesAreColumns: true,
             enabledValues: ["true", "hackable", "limited"] as const
         }),
@@ -167,6 +169,7 @@ export const getDefaultFilters = () => {
             sortAlphabetical: true,
             sortCheckbox: false,
             table: "Input",
+            collapse: true,
             valuesAreColumns: true,
             enabledValues: ["true", "hackable"] as const,
         }),
@@ -188,6 +191,7 @@ export const getDefaultFilters = () => {
             sortAlphabetical: true,
             sortCheckbox: false,
             table: "Infobox_game",
+            collapse: true,
             column: "Controls",
             isList: true
         }),
@@ -203,6 +207,7 @@ export const getDefaultFilters = () => {
             sortAlphabetical: false,
             sortCheckbox: false,
             table: "Infobox_game",
+            collapse: false,
             column: "Modes",
             isList: true
         }),
@@ -289,6 +294,7 @@ export const getDefaultFilters = () => {
             sortAlphabetical: true,
             sortCheckbox: false,
             table: "Infobox_game",
+            collapse: false,
             column: "Genres",
             isList: true
         }),
@@ -317,6 +323,7 @@ export const getDefaultFilters = () => {
             sortAlphabetical: true,
             sortCheckbox: false,
             table: "Infobox_game",
+            collapse: true,
             column: "Art_styles",
             isList: true
         }),
@@ -337,6 +344,7 @@ export const getDefaultFilters = () => {
             sortAlphabetical: false,
             sortCheckbox: false,
             table: "Infobox_game",
+            collapse: false,
             column: "Available_on",
             isList: true
         }),
@@ -358,6 +366,7 @@ export const getDefaultFilters = () => {
             sortAlphabetical: true,
             sortCheckbox: false,
             table: "Infobox_game",
+            collapse: true,
             column: "Monetization",
             isList: true
         }),
@@ -384,6 +393,7 @@ export const getDefaultFilters = () => {
             sortAlphabetical: true,
             sortCheckbox: false,
             table: "Infobox_game",
+            collapse: true,
             column: "Microtransactions",
             isList: true
         }),
@@ -402,6 +412,7 @@ export const getDefaultFilters = () => {
             sortCheckbox: false,
             sortAlphabetical: true,
             table: "Infobox_game",
+            collapse: true,
             column: "Pacing",
             isList: true
         }),
@@ -427,6 +438,7 @@ export const getDefaultFilters = () => {
             sortCheckbox: false,
             sortAlphabetical: true,
             table: "Infobox_game",
+            collapse: true,
             column: "Perspectives",
             isList: true
         }),
@@ -485,6 +497,7 @@ export const getDefaultFilters = () => {
             sortCheckbox: false,
             sortAlphabetical: true,
             table: "Infobox_game",
+            collapse: true,
             column: "Themes",
             isList: true
         }),
@@ -533,6 +546,7 @@ export const getDefaultFilters = () => {
             sortCheckbox: false,
             sortAlphabetical: true,
             table: "Infobox_game",
+            collapse: true,
             column: "Sports",
             isList: true
         }),
@@ -565,6 +579,7 @@ export const getDefaultFilters = () => {
             sortCheckbox: false,
             sortAlphabetical: true,
             table: "Infobox_game",
+            collapse: true,
             column: "Vehicles",
             isList: true
         }),
@@ -583,6 +598,7 @@ export const getDefaultFilters = () => {
             sortCheckbox: false,
             sortAlphabetical: false,
             table: "Infobox_game",
+            collapse: true,
             column: "License"
         })
     };

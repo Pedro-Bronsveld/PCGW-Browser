@@ -9,6 +9,7 @@ export type Filter<TableName extends keyof Tables> = {
     sortAlphabetical: boolean;
     sortCheckbox: boolean;
     table: TableName & string;
+    collapse: boolean;
     isList?: boolean;
     radio?: boolean;
 } & ({
