@@ -176,6 +176,8 @@ const toggleCollapse = () => props.filter.collapse = !props.filter.collapse;
         background-color: var(--grey-medium-light);
         color: var(--grey-dark);
         cursor: pointer;
+        display: flex;
+        justify-content: center;
 
         &:hover {
             background-color: var(--primary-8);
@@ -183,19 +185,19 @@ const toggleCollapse = () => props.filter.collapse = !props.filter.collapse;
         }
 
         &::after {
-            content: "▶";
+            content: "❯";
             position: relative;
-            display: inline-block;
+            display: inline-flex;
             top: 100px;
-            width: 100%;
-            max-height: 20px;
-            text-align: center;
+            height: 20px;
+            width: 20px;
+            justify-content: center;
         }
     }
 
     &:checked {
         &::after {
-            content: "▼";
+            transform: rotate(90deg);
         }
     }
 }
