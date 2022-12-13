@@ -61,7 +61,8 @@ const toggleCollapse = () => props.filter.collapse = !props.filter.collapse;
     <h3 class="filterTitle"
     @click="toggleCollapse"
     :class="{
-        collapse: filter.collapse
+        collapse: filter.collapse,
+        active: anyEnabled
     }" >{{ filter.title }}</h3>
     <div class="filterContent"
         :class="{
@@ -126,6 +127,20 @@ const toggleCollapse = () => props.filter.collapse = !props.filter.collapse;
     &.collapse {
         &::before {
             transform: rotate(0deg);
+        }
+    }
+
+    &.active {
+        &::after {
+            content: "active";
+            font-weight: normal;
+            float: right;
+            min-height: 25px;
+            line-height: 25px;
+            font-size: 13px;
+            padding: 0 5px;
+            color: white;
+            background-color: var(--primary-7);
         }
     }
 }
