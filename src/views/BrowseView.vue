@@ -93,8 +93,19 @@ const queryParams = computed(() => route.query);
 const onQueryParamsChanged = (locationQuery: LocationQuery, coldRun: boolean = false) => {
     const searchGamesOptionsChanged = queryParamsToSearchGamesOptions(locationQuery, searchOptions);
     console.log("searchGamesOptionsChanged", searchGamesOptionsChanged);
-    const count = Number(locationQuery.limit) || limit;
-    if (searchGamesOptionsChanged || count !== roundGameCount(games.size, limit) || coldRun) {
+    const paramLimit = Number(locationQuery.limit);
+    const count = paramLimit || limit;
+    const roundCount = roundGameCount(games.size, limit);
+    if (!searchGamesOptionsChanged && games.size > count) {
+        // Handle navigating back after loading more games.
+        // Only remove games from the games map.
+        [...games.keys()].slice(count).forEach(key => games.delete(key));
+    }
+    else if (!searchGamesOptionsChanged && games.size < count) {
+        // Handle navigating forward and loading more games.
+        updateGames(true);
+    }
+    else if (searchGamesOptionsChanged || (count !== roundCount && count !== games.size) || coldRun) {
         updateGames(false, count);
     }
 }
