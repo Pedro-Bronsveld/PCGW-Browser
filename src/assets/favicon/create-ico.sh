@@ -1,0 +1,1 @@
+ffmpeg -y -i ./favicon.png ../../../public/favicon.ico
