@@ -28,7 +28,7 @@ const genresText = computed(() => props.game.genres?.split(",")
 
 <template>
     <a class="gameLink" :href="gamePageToUrl(game.page)">
-        <img class="cover" v-if="typeof game.coverUrl === 'string'" :src="coverToThumbnailUrl(game.coverUrl)" loading="lazy" decoding="async" />
+        <img class="cover" v-if="typeof game.coverUrl === 'string'" :src="coverToThumbnailUrl(game.coverUrl)" loading="lazy" decoding="async" referrerpolicy="same-origin" />
         <div class="gameInfo">
             <h3 class="gameTitle" v-html="game.page"></h3>
             <p>{{ releaseDateText }}</p>
